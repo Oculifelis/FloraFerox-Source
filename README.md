@@ -6,5 +6,4 @@ line for each class, armour, charms and the Weedwarden villager.
 
 Build with `./gradlew build`.
 
-Copyright Oculifelis, all rights reserved. The source is here to read and learn from; please don't redistribute the
-mod or its art. Downloads and the changelog are on CurseForge.
+By Oculifelis. Downloads and the changelog are on CurseForge.

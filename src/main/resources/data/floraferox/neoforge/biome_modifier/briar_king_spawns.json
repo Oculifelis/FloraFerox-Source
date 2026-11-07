@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:dark_forest",
+    "minecraft:forest"
+  ],
+  "spawners": {
+    "type": "floraferox:briar_king",
+    "weight": 1,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

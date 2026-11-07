@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:moon_charm",
+    "floraferox:lantern_husk",
+    "floraferox:lantern_husk",
+    "floraferox:lantern_husk"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:lantern_charm"
+  }
+}

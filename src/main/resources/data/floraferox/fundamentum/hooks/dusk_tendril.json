@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:dusk_tendril",
+  "texture": "floraferox:textures/entity/hook/dusk_tendril.png",
+  "range": 18,
+  "shoot_speed": 1.5,
+  "pull_speed": 0.8,
+  "count": 1,
+  "still": false,
+  "air_seconds": 1.5
+}

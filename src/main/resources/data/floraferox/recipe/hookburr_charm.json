@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:pulse_charm",
+    "floraferox:hookburr",
+    "floraferox:hookburr",
+    "floraferox:hookburr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:hookburr_charm"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "floraferox:item/carrion_bloom_spawn_egg"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:soul_sand_valley"
+  ],
+  "spawners": {
+    "type": "floraferox:soulwick",
+    "weight": 12,
+    "minCount": 1,
+    "maxCount": 3
+  }
+}

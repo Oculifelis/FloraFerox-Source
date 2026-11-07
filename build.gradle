@@ -1,0 +1,117 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            jvmArgument '-Xmx3G'
+            // Fundamentum's WindowMixin opens the test window without focus
+            systemProperty 'fundamentum.nofocus', 'true'
+        }
+        server {
+            server()
+            gameDirectory = project.file('run-server')
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        // Launches the GameTestServer, runs every floraferox game test, then exits (non-zero on failure).
+        gameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('run-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        configureEach {
+            systemProperty 'forge.logging.markers', ''
+            logLevel = org.slf4j.event.Level.INFO
+            jvmArgument '-Xmx2G'
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            fundamentum_range      : fundamentum_range,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+// Game tests register only when a dev run sets neoforge.enabledGameTestNamespaces; their arena stays out of the jar.
+tasks.named('jar', Jar) {
+    exclude 'data/floraferox/structure/**'
+}
+
+// 1.5: Curios, optional: the Peace Lily Charm goes in its charm slot when it is installed (Truce, CuriosCompat).
+// 1.6: Fundamentum, required: the whips are its cord whips. Curios is Fundamentum's required dependency, so dev runs load it.
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+repositories {
+    maven {
+        name = 'JEI (BlameJared), only for dev runs with -PwithJei'
+        url = 'https://maven.blamejared.com/'
+        content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
+    }
+    maven {
+        name = 'Curios (TheIllusiveC4)'
+        url = 'https://maven.theillusivec4.top/'
+        content { includeGroup 'top.theillusivec4.curios' }
+    }
+    maven {
+        name = 'Fundamentum (the shared core mod, local repo)'
+        url = 'file:///H:/AI_MC_Modding/Fundamentum/repo'
+        content { includeGroup 'com.fundamentum' }
+    }
+}
+
+dependencies {
+    implementation "com.fundamentum:fundamentum-neoforge:${fundamentum_version}"
+    // 1.9: JEI is optional; compat/VerdureJeiPlugin only loads when JEI finds it (API jar as in Automagy and Aromara).
+    compileOnly files('libs/jei-26.1.2-common-api-29.47.0.111.jar')
+    if (providers.gradleProperty('withJei').isPresent()) localRuntime "mezz.jei:jei-26.1.2-neoforge:29.47.0.111"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

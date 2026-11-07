@@ -1,0 +1,8 @@
+{
+  "item": "floraferox:emberwing",
+  "flight_ticks": 45,
+  "rise_speed": 0.42,
+  "rise_acceleration": 0.11,
+  "horizontal_speed": 1.15,
+  "glide_fall_speed": 0.12
+}

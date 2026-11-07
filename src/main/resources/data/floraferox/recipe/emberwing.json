@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:leafwing",
+    "#floraferox:herbs/tier2",
+    "#floraferox:herbs/tier2",
+    "#floraferox:herbs/tier2",
+    "#floraferox:herbs/tier2",
+    "floraferox:ember_graft",
+    "#floraferox:trophies"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:emberwing"
+  }
+}

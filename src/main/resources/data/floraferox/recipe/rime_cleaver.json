@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:flare_cleaver",
+    "floraferox:mirerime",
+    "floraferox:mirerime",
+    "floraferox:rime_graft",
+    "#floraferox:trophies/bog"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rime_cleaver"
+  }
+}

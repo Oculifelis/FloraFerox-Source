@@ -1,0 +1,13 @@
+{
+  "wants": {
+    "id": "floraferox:pulseroot_token",
+    "count": 3.0
+  },
+  "gives": {
+    "id": "floraferox:ember_graft",
+    "count": 1
+  },
+  "max_uses": 8.0,
+  "reputation_discount": 0.05,
+  "xp": 10.0
+}

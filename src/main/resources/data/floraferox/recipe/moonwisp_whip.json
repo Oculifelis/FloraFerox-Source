@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:moonwisp",
+    "S": "minecraft:string",
+    "T": "floraferox:moonwisp_token"
+  },
+  "pattern": [
+    "HS",
+    "ST"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:moonwisp_whip"
+  }
+}

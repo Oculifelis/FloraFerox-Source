@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:pulseroot",
+    "S": "minecraft:string",
+    "T": "floraferox:pulseroot_token"
+  },
+  "pattern": [
+    " HS",
+    "T S",
+    " HS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:heartstring_bow"
+  }
+}

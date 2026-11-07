@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "#floraferox:herbs/tier1",
+    "P": "minecraft:phantom_membrane",
+    "T": "#floraferox:tokens"
+  },
+  "pattern": [
+    "HPH",
+    "HTH",
+    "H H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:leafwing"
+  }
+}

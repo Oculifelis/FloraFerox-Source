@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "floraferox:block/thorn_hopper_den_top",
+    "side": "floraferox:block/thorn_hopper_den_side",
+    "bottom": "floraferox:block/thorn_hopper_den_bottom"
+  }
+}

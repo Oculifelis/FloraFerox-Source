@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:mire_charm",
+    "floraferox:sundew_glue",
+    "floraferox:sundew_glue",
+    "floraferox:sundew_glue"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:sundew_charm"
+  }
+}

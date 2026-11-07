@@ -1,0 +1,13 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 3.0
+  },
+  "gives": {
+    "id": "floraferox:burr_pellet",
+    "count": 16
+  },
+  "max_uses": 12.0,
+  "reputation_discount": 0.05,
+  "xp": 5.0
+}

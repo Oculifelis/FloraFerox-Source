@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:bamboo_jungle"
+  ],
+  "spawners": {
+    "type": "floraferox:orchid_mantis",
+    "weight": 10,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:mirecap_grapple",
+  "texture": "floraferox:textures/entity/hook/mirecap_grapple.png",
+  "range": 15,
+  "shoot_speed": 1.6,
+  "pull_speed": 1.1,
+  "count": 3,
+  "still": false,
+  "air_seconds": 0.0
+}

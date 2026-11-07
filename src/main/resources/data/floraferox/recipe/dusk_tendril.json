@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:duskpetal",
+    "T": "floraferox:duskpetal_token",
+    "S": "minecraft:string"
+  },
+  "pattern": [
+    "  H",
+    " T ",
+    "S  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:dusk_tendril"
+  }
+}

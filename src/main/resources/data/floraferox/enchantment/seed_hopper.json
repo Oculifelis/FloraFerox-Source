@@ -1,0 +1,21 @@
+{
+  "description": {
+    "translate": "enchantment.floraferox.seed_hopper"
+  },
+  "supported_items": "#floraferox:seed_guns",
+  "primary_items": "#floraferox:seed_guns",
+  "weight": 5,
+  "max_level": 1,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 62,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand"
+  ]
+}

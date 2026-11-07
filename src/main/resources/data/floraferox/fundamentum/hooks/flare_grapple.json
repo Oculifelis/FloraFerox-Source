@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:flare_grapple",
+  "texture": "floraferox:textures/entity/hook/flare_grapple.png",
+  "range": 19,
+  "shoot_speed": 1.9,
+  "pull_speed": 1.25,
+  "count": 3,
+  "still": false,
+  "air_seconds": 0.0
+}

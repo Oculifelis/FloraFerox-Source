@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:moonwisp_whip",
+    "floraferox:moonflare",
+    "floraferox:moonflare",
+    "floraferox:ember_graft",
+    "#floraferox:trophies/lunar"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:moonflare_whip"
+  }
+}

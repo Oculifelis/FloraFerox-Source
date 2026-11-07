@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:moonrime_grapnel",
+  "texture": "floraferox:textures/entity/hook/moonrime_grapnel.png",
+  "range": 26,
+  "shoot_speed": 2.1,
+  "pull_speed": 1.05,
+  "count": 2,
+  "still": true,
+  "air_seconds": 0.0
+}

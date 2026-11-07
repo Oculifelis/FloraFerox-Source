@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:rime_tendril",
+  "texture": "floraferox:textures/entity/hook/rime_tendril.png",
+  "range": 26,
+  "shoot_speed": 2.1,
+  "pull_speed": 1.1,
+  "count": 1,
+  "still": false,
+  "air_seconds": 2.5
+}

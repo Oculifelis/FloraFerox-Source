@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:pulse_hook",
+  "texture": "floraferox:textures/entity/hook/pulse_hook.png",
+  "range": 26,
+  "shoot_speed": 2.2,
+  "pull_speed": 0.9,
+  "count": 1,
+  "still": false,
+  "air_seconds": 0.0
+}

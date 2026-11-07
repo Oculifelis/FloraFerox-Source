@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "floraferox:item/pearl_pod_spawn_egg"
+  }
+}

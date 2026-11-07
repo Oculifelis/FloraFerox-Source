@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:duskpetal_token",
+    "floraferox:pulseroot_token",
+    "floraferox:moonwisp_token",
+    "floraferox:mirecap_token",
+    "minecraft:lily_of_the_valley",
+    "minecraft:gold_ingot"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:peace_lily_charm"
+  }
+}

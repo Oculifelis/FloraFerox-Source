@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:dark_forest",
+    "minecraft:birch_forest",
+    "minecraft:flower_forest"
+  ],
+  "spawners": {
+    "type": "floraferox:bell_stalker",
+    "weight": 10,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

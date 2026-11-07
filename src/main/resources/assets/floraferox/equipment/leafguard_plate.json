@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "floraferox:leafguard_plate"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "floraferox:leafguard_plate"
+      }
+    ]
+  }
+}

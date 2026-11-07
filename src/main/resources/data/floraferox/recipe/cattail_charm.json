@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:mire_charm",
+    "floraferox:cattail_fluff",
+    "floraferox:cattail_fluff",
+    "floraferox:cattail_fluff"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:cattail_charm"
+  }
+}

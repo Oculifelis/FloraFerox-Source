@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": "#minecraft:small_flowers",
+    "B": "minecraft:glass_bottle",
+    "S": "minecraft:wheat_seeds",
+    "C": "minecraft:clay_ball",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "FBS",
+    "CCC",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:grafting_bench"
+  }
+}

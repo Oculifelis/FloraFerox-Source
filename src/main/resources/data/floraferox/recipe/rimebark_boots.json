@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:emberbark_boots",
+    "#floraferox:herbs/tier3",
+    "#floraferox:herbs/tier3",
+    "floraferox:rime_graft",
+    "#floraferox:trophies"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rimebark_boots"
+  }
+}

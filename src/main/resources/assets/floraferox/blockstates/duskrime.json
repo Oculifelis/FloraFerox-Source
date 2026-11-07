@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "floraferox:block/duskrime_stage0"
+    },
+    "age=1": {
+      "model": "floraferox:block/duskrime_stage1"
+    },
+    "age=2": {
+      "model": "floraferox:block/duskrime_stage2"
+    },
+    "age=3": {
+      "model": "floraferox:block/duskrime_stage3"
+    }
+  }
+}

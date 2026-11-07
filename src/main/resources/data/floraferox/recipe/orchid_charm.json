@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:moon_charm",
+    "floraferox:orchid_blade",
+    "floraferox:orchid_blade",
+    "floraferox:orchid_blade"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:orchid_charm"
+  }
+}

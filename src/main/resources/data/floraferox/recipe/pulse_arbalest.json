@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:pulseroot",
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:string",
+    "K": "minecraft:tripwire_hook",
+    "T": "floraferox:pulseroot_token"
+  },
+  "pattern": [
+    "HIH",
+    "SKS",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:pulse_arbalest"
+  }
+}

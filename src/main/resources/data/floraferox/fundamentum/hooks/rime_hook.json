@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:rime_hook",
+  "texture": "floraferox:textures/entity/hook/rime_hook.png",
+  "range": 34,
+  "shoot_speed": 2.8,
+  "pull_speed": 1.2,
+  "count": 1,
+  "still": false,
+  "air_seconds": 0.0
+}

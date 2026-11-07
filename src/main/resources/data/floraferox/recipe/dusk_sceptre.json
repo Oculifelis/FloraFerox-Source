@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:duskpetal",
+    "S": "minecraft:stick",
+    "T": "floraferox:duskpetal_token"
+  },
+  "pattern": [
+    "  H",
+    " S ",
+    "T  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:dusk_sceptre"
+  }
+}

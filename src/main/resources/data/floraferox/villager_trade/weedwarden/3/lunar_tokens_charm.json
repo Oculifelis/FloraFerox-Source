@@ -1,0 +1,17 @@
+{
+  "wants": {
+    "id": "floraferox:moonwisp_token",
+    "count": 8.0
+  },
+  "gives": {
+    "id": "floraferox:moon_charm",
+    "count": 1
+  },
+  "max_uses": 2.0,
+  "reputation_discount": 0.05,
+  "xp": 10.0,
+  "additional_wants": {
+    "id": "minecraft:emerald",
+    "count": 6.0
+  }
+}

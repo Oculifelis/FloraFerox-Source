@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:scorch_hook",
+  "texture": "floraferox:textures/entity/hook/scorch_hook.png",
+  "range": 30,
+  "shoot_speed": 2.5,
+  "pull_speed": 1.05,
+  "count": 1,
+  "still": false,
+  "air_seconds": 0.0
+}

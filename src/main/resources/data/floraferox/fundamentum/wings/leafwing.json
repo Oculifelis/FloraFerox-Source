@@ -1,0 +1,8 @@
+{
+  "item": "floraferox:leafwing",
+  "flight_ticks": 30,
+  "rise_speed": 0.35,
+  "rise_acceleration": 0.1,
+  "horizontal_speed": 1.0,
+  "glide_fall_speed": 0.15
+}

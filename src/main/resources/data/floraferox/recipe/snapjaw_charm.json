@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:dusk_charm",
+    "floraferox:snapjaw_petal",
+    "floraferox:snapjaw_petal",
+    "floraferox:snapjaw_petal"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:snapjaw_charm"
+  }
+}

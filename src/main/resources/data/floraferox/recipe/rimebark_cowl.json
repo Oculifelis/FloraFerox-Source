@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:emberbark_cowl",
+    "floraferox:moonrime",
+    "floraferox:moonrime",
+    "floraferox:rime_graft",
+    "#floraferox:trophies/lunar"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rimebark_cowl"
+  }
+}

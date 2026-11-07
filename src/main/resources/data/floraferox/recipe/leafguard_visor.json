@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "floraferox:mirecap",
+    "T": "floraferox:mirecap_token"
+  },
+  "pattern": [
+    "HTH",
+    "H H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:leafguard_visor"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:emberbark_sallet",
+    "floraferox:duskrime",
+    "floraferox:duskrime",
+    "floraferox:rime_graft",
+    "#floraferox:trophies/night"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rimebark_sallet"
+  }
+}

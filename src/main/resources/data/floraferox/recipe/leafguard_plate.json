@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "#floraferox:herbs/tier1",
+    "T": "#floraferox:tokens"
+  },
+  "pattern": [
+    "H H",
+    "HTH",
+    "HHH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:leafguard_plate"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "floraferox:rimebark_plate"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "floraferox:rimebark_plate"
+      }
+    ]
+  }
+}

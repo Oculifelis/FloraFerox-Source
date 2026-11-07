@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "H": "floraferox:pulseroot",
+    "T": "floraferox:pulseroot_token"
+  },
+  "pattern": [
+    "IHH",
+    "  T"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:pulse_pistol"
+  }
+}

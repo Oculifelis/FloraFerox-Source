@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:ember_tendril",
+  "texture": "floraferox:textures/entity/hook/ember_tendril.png",
+  "range": 22,
+  "shoot_speed": 1.8,
+  "pull_speed": 0.95,
+  "count": 1,
+  "still": false,
+  "air_seconds": 2.0
+}

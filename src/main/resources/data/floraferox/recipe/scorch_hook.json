@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:pulse_hook",
+    "floraferox:pulseflare",
+    "floraferox:pulseflare",
+    "floraferox:ember_graft",
+    "#floraferox:trophies/heart"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:scorch_hook"
+  }
+}

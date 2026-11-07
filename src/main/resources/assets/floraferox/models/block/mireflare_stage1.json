@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "floraferox:block/mireflare_stage1"
+  }
+}

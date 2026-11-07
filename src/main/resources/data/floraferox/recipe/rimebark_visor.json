@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:emberbark_visor",
+    "floraferox:mirerime",
+    "floraferox:mirerime",
+    "floraferox:rime_graft",
+    "#floraferox:trophies/bog"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rimebark_visor"
+  }
+}

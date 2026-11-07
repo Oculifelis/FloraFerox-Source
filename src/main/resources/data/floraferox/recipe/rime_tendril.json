@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:ember_tendril",
+    "floraferox:duskrime",
+    "floraferox:duskrime",
+    "floraferox:rime_graft",
+    "#floraferox:trophies/night"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rime_tendril"
+  }
+}

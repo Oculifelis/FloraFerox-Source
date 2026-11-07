@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:rime_grapple",
+  "texture": "floraferox:textures/entity/hook/rime_grapple.png",
+  "range": 23,
+  "shoot_speed": 2.2,
+  "pull_speed": 1.4,
+  "count": 3,
+  "still": false,
+  "air_seconds": 0.0
+}

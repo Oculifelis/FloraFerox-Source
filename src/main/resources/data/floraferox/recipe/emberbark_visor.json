@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "floraferox:leafguard_visor",
+    "floraferox:mireflare",
+    "floraferox:mireflare",
+    "floraferox:ember_graft",
+    "#floraferox:trophies/bog"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:emberbark_visor"
+  }
+}

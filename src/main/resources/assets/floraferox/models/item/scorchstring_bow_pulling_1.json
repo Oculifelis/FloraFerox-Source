@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "floraferox:item/scorchstring_bow_pulling_1"
+  }
+}

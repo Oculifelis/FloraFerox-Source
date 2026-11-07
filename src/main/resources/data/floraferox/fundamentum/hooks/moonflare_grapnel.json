@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:moonflare_grapnel",
+  "texture": "floraferox:textures/entity/hook/moonflare_grapnel.png",
+  "range": 22,
+  "shoot_speed": 1.8,
+  "pull_speed": 0.9,
+  "count": 2,
+  "still": true,
+  "air_seconds": 0.0
+}

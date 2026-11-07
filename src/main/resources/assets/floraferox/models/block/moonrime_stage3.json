@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "floraferox:block/moonrime_stage3"
+  }
+}

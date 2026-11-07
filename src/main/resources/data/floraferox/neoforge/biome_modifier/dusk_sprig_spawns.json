@@ -1,0 +1,17 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:sunflower_plains",
+    "minecraft:forest",
+    "minecraft:birch_forest",
+    "minecraft:flower_forest",
+    "minecraft:meadow"
+  ],
+  "spawners": {
+    "type": "floraferox:dusk_sprig",
+    "weight": 14,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

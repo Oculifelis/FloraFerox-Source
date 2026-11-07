@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "#floraferox:herbs/tier1"
+  },
+  "pattern": [
+    "HHH",
+    "H H",
+    "H H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:leafguard_leggings"
+  }
+}

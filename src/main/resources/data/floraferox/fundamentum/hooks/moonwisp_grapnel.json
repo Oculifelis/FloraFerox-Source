@@ -1,0 +1,10 @@
+{
+  "item": "floraferox:moonwisp_grapnel",
+  "texture": "floraferox:textures/entity/hook/moonwisp_grapnel.png",
+  "range": 18,
+  "shoot_speed": 1.5,
+  "pull_speed": 0.75,
+  "count": 2,
+  "still": true,
+  "air_seconds": 0.0
+}

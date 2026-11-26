@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "floraferox:item/coil_snail_spawn_egg"
+  }
+}

@@ -115,7 +115,13 @@ public final class VerdureRules {
     public static final float[] LASH_DAMAGE = {0F, 4F, 6F, 8F};
     public static final int BLADE_COOLDOWN = 20, STAFF_COOLDOWN = 14, LASH_COOLDOWN = 16, LASH_MISS_COOLDOWN = 8;
     public static final int[] GUN_COOLDOWN = {0, 12, 10, 8};
-    public static final double LASH_RANGE = 6.0, LASH_COMMAND_RANGE = 16.0;
+    /** 1.20, each gun's feel: muzzle speed, spread (vanilla inaccuracy units) and the shot's drop per tick. */
+    public static final float[] GUN_SPEED = {0F, 3.0F, 2.6F, 3.4F};
+    public static final float[] GUN_SPREAD = {0F, 0.4F, 0.9F, 0.25F};
+    public static final double[] GUN_GRAVITY = {0, 0.01, 0.025, 0.005};
+    /** Cord length per tier: each tier past the first reaches farther. */
+    public static final double[] LASH_RANGE = {0, 5.5, 7.0, 8.5};
+    public static final double LASH_COMMAND_RANGE = 16.0;
 
     // ---- 1.1: the genes ---------------------------------------------------------------------------------------------
     /** Ember Graft from a Blaze or Magma Cube, Rime Graft from a Stray, when a player kills it. */
@@ -258,10 +264,10 @@ public final class VerdureRules {
         ROOT_GRUB("root_grub", Kind.MIRE_GHAST, Move.GROUND, Style.LUNGE, 22, 5, 4, 0.24, 12, 6, 14, 24, 3.2, 2.2, Mark.NONE, When.NIGHT, 1.1F, 1.0F, 0),
         PITCHER_SPITTER("pitcher_spitter", Kind.MIRE_GHAST, Move.GROUND, Style.SHOT, 22, 3, 4, 0.20, 16, 4, 16, 36, 10.0, 0, Mark.SLOW, When.DAY, 1.1F, 1.45F, 0),
         BELL_STALKER("bell_stalker", Kind.MOON_TICK, Move.GROUND, Style.MELEE, 22, 5, 2, 0.22, 14, 6, 16, 24, 2.8, 3.4, Mark.SLOW, When.NIGHT, 1.2F, 1.55F, 0),
-        THORN_MATRIARCH("thorn_matriarch", Kind.PULSE_GNAT, Move.GROUND, Style.LEAP, 120, 8, 6, 0.30, 16, 12, 20, 40, 7.0, 3.0, Mark.NONE, When.DAY, 1.8F, 2.2F, BOSS),
-        BRIAR_KING("briar_king", Kind.MIRE_GHAST, Move.GROUND, Style.BURST, 140, 9, 8, 0.24, 18, 6, 20, 36, 3.2, 4.0, Mark.SLOW, When.NIGHT, 1.6F, 2.9F, BOSS),
-        CARRION_BLOOM("carrion_bloom", Kind.MIRE_GHAST, Move.STILL, Style.MELEE, 100, 7, 6, 0.0, 14, 6, 18, 24, 4.5, 5.0, Mark.SLOW, When.ANY, 1.8F, 1.4F, BOSS),
-        CRIMSON_BEHEMOTH("crimson_behemoth", Kind.MIRE_GHAST, Move.GROUND, Style.BURST, 160, 10, 10, 0.22, 20, 6, 22, 40, 4.0, 5.0, Mark.BURN, When.ANY, 3.2F, 3.6F, BOSS),
+        THORN_MATRIARCH("thorn_matriarch", Kind.PULSE_GNAT, Move.GROUND, Style.LEAP, 300, 8, 6, 0.30, 16, 12, 20, 40, 7.0, 3.0, Mark.NONE, When.DAY, 2.7F, 3.0F, BOSS),   // t4_springqueen: 3 blocks tall
+        BRIAR_KING("briar_king", Kind.MIRE_GHAST, Move.GROUND, Style.BURST, 380, 9, 8, 0.24, 18, 6, 20, 36, 3.2, 4.0, Mark.SLOW, When.NIGHT, 2.6F, 4.4F, BOSS),
+        CARRION_BLOOM("carrion_bloom", Kind.MIRE_GHAST, Move.STILL, Style.MELEE, 340, 7, 6, 0.0, 14, 6, 18, 24, 4.5, 5.0, Mark.SLOW, When.ANY, 1.8F, 1.4F, BOSS),
+        CRIMSON_BEHEMOTH("crimson_behemoth", Kind.MIRE_GHAST, Move.GROUND, Style.BURST, 420, 10, 10, 0.22, 20, 6, 22, 40, 4.0, 5.0, Mark.BURN, When.ANY, 4.0F, 4.6F, BOSS),
         PEARL_POD("pearl_pod", Kind.DUSK_SPRIG, Move.FLY, Style.BURST, 16, 4, 2, 0.25, 12, 6, 14, 30, 2.5, 3.0, Mark.NONE, When.ANY, 0.7F, 1.2F, BLINK),
         VOID_JELLY("void_jelly", Kind.DUSK_SPRIG, Move.FLY, Style.MELEE, 20, 4, 0, 0.25, 12, 6, 16, 24, 2.4, 3.0, Mark.POISON, When.ANY, 0.7F, 1.6F, 0),
         RIFT_NARWHAL("rift_narwhal", Kind.MOON_TICK, Move.FLY, Style.LUNGE, 80, 7, 6, 0.35, 16, 8, 18, 40, 5.0, 3.5, Mark.NONE, When.ANY, 4.0F, 2.7F, NEUTRAL | TAME),
@@ -270,7 +276,12 @@ public final class VerdureRules {
         SOULWICK("soulwick", Kind.PULSE_GNAT, Move.GROUND, Style.LEAP, 20, 4, 2, 0.26, 12, 8, 14, 28, 4.5, 2.2, Mark.BURN, When.ANY, 1.0F, 1.5F, 0),
         CINDER_THISTLE("cinder_thistle", Kind.PULSE_GNAT, Move.GROUND, Style.SHOT, 18, 4, 2, 0.22, 14, 4, 14, 30, 10.0, 0, Mark.BURN, When.ANY, 1.05F, 1.7F, 0),
         LANTERNPUFF("lanternpuff", Kind.MOON_TICK, Move.FLY, Style.SHOT, 16, 3, 0, 0.18, 14, 4, 16, 40, 8.0, 0, Mark.BURN, When.ANY, 0.7F, 1.3F, NEUTRAL),
-        NYLIUM_LURKER("nylium_lurker", Kind.MIRE_GHAST, Move.GROUND, Style.LUNGE, 22, 5, 4, 0.28, 8, 8, 14, 24, 4.0, 2.4, Mark.NONE, When.ANY, 1.8F, 0.8F, AMBUSH);
+        NYLIUM_LURKER("nylium_lurker", Kind.MIRE_GHAST, Move.GROUND, Style.LUNGE, 22, 5, 4, 0.28, 8, 8, 14, 24, 4.0, 2.4, Mark.NONE, When.ANY, 1.8F, 0.8F, AMBUSH),
+        // the four new species (section 12 rule 3), each only in its own biome, its family and drops its relative's
+        WARPED_WARTBACK("warped_wartback", Kind.MIRE_GHAST, Move.GROUND, Style.LUNGE, 26, 5, 4, 0.25, 12, 10, 16, 30, 5.0, 2.4, Mark.NONE, When.ANY, 1.35F, 1.6F, 0),
+        SNARLSTUMP("snarlstump", Kind.MOON_TICK, Move.GROUND, Style.MELEE, 22, 5, 3, 0.22, 14, 6, 16, 24, 2.8, 3.2, Mark.SLOW, When.ANY, 0.75F, 1.55F, 0),
+        BLIGHTCAP("blightcap", Kind.DUSK_SPRIG, Move.GROUND, Style.BURST, 18, 3, 2, 0.22, 14, 6, 16, 36, 2.8, 3.2, Mark.POISON, When.ANY, 0.75F, 1.2F, NEUTRAL),
+        GLISTERLURE("glisterlure", Kind.MIRE_GHAST, Move.GROUND, Style.LUNGE, 20, 5, 2, 0.24, 12, 8, 14, 26, 4.0, 2.4, Mark.NONE, When.ANY, 0.9F, 1.55F, 0);
 
         public final String id;
         public final Kind kind;
@@ -308,10 +319,14 @@ public final class VerdureRules {
 
         public boolean is(int flag) { return (flags & flag) != 0; }
 
+        /** The End fliers roam in open air, including over gaps between islands. */
+        public boolean fliesFreely() { return this == VOID_JELLY || this == RIFT_NARWHAL; }
+
         /** The Nether's take no harm from fire or lava's heat. */
         public boolean fireproof() {
             return switch (this) {
-                case CRIMSON_BEHEMOTH, WARTBACK, WARPED_STILT, SOULWICK, CINDER_THISTLE, LANTERNPUFF, NYLIUM_LURKER -> true;
+                case CRIMSON_BEHEMOTH, WARTBACK, WARPED_STILT, SOULWICK, CINDER_THISTLE, LANTERNPUFF, NYLIUM_LURKER, WARPED_WARTBACK, SNARLSTUMP,
+                     BLIGHTCAP, GLISTERLURE -> true;
                 default -> false;
             };
         }
@@ -364,20 +379,85 @@ public final class VerdureRules {
     public static final double WATCHED_DOT = 0.9;
     /** The Graft Twin fires both heads every third volley. */
     public static final int TWIN_VOLLEY_EVERY = 3;
-    /** The Thorn Matriarch's landing: a shockwave this wide; its brood of Thorn Hoppers at two thirds and a third of its health. */
+    /** A boss's small shockwave (the Matriarch's landings): this wide, this hard. */
     public static final double SLAM_RADIUS = 3.5, SLAM_KNOCKBACK = 1.0;
-    public static final int BROOD = 2;
-    /** The Briar King's and Crimson Behemoth's charge: from this far, this fast, this long, this often. */
+    /** The Briar King's charge: from this far, this fast, this long, this often. */
     public static final double CHARGE_FROM = 6.0, CHARGE_TO = 16.0, CHARGE_SPEED = 0.45, CHARGE_KNOCKBACK = 1.2;
     public static final int CHARGE_TICKS = 30, CHARGE_COOLDOWN = 120;
-    /** The Briar King's thorns, under half its health: what a blow at it costs its striker. */
+    /** The Briar King's thorns (his second and third phases): what a blow at him costs his striker. */
     public static final float THORNS = 2F;
-    /** The Crimson Behemoth's fire volley at prey this far: three fireballs, this often. */
-    public static final double VOLLEY_FROM = 8.0;
-    public static final int VOLLEY_COOLDOWN = 100;
+    /**
+     * The Crimson Behemoth's fight (docs/DESIGN.md section 14): its arena's ring of roots this far out and this high, regrown
+     * this often, its four pillars this far in; it sinks back after this long with no player this near; each extra player in
+     * the ring adds this share of health; out of the ring, it hits this much harder and runs this much faster.
+     */
+    public static final int RING_RADIUS = 24, RING_HEIGHT = 3, RING_REGROW = 100, PILLAR_OFFSET = 9, PILLAR_HEIGHT = 5;
+    public static final int LEASH_RANGE = 48, LEASH_TICKS = 600;
+    public static final double EXTRA_PLAYER_HEALTH = 0.5, ENRAGE_DAMAGE = 0.5, ENRAGE_SPEED = 0.3;
+    /** Its phases: the second at this share of health, the third at this; how long its wake, roars and death last. */
+    public static final float SPOREFALL_AT = 0.6F, ROT_BLOOM_AT = 0.3F;
+    public static final int WAKE_TICKS = 60, ROAR_TICKS = 40, DYING_TICKS = 60;
+    /** Its moves: the gore (paw, run, a stun if it hits a wall), the stamp's rolling ring, the swipe, the mortars, the line of roots, the storm. */
+    public static final int PAW_TICKS = 20, GORE_TICKS = 30, WALL_STUN_TICKS = 40, FLASH_STUN_TICKS = 20;
+    public static final double GORE_SPEED = 0.55, GORE_FROM = 7.0;
+    public static final int REAR_TICKS = 16, STAMP_TICKS = 20;
+    /** Its last phase's cracks flare while it rears and for this long as the stamp lands; any hit then does this much more. */
+    public static final int FLARE_GRACE = 10;
+    public static final float FLARE_BONUS = 1.5F;
+    public static final double STAMP_RADIUS = 10.0, STAMP_REACH = 9.0, STAMP_UP = 0.5;
+    public static final int SWIPE_TICKS = 12;
+    public static final double SWIPE_REACH = 4.5;
+    public static final int MORTAR_TELL = 10, MORTAR_FLIGHT = 20, MORTAR_CLOUD_TICKS = 120, MORTAR_COOLDOWN = 100;
+    public static final double MORTAR_FROM = 6.0, MORTAR_SPREAD = 4.0, MORTAR_RADIUS = 2.0;
+    public static final int ERUPT_TELL = 14, ERUPT_COOLDOWN = 120, ERUPT_POINTS = 5;
+    public static final double ERUPT_GAP = 1.5, ERUPT_RADIUS = 1.2, ROOT_UP = 0.8;
+    public static final int CHANNEL_TICKS = 80, STORM_COOLDOWN = 300, CHAIN = 3, LURKERS = 2;
+    /** How much of its attack each move deals. */
+    public static final float GORE_SHARE = 1.2F, STAMP_SHARE = 0.8F, SWIPE_SHARE = 1.0F, MORTAR_SHARE = 0.6F, ERUPT_SHARE = 0.9F, STORM_SHARE = 1.5F;
+    /** The mound regrows this long after its Behemoth woke (3 in-game days). */
+    public static final int MOUND_REGROW = 72000;
     /** The Carrion Bloom's vines drag prey within this far toward it, and its spores hang in a poison cloud: this often. */
-    public static final double PULL_RANGE = 10.0, PULL_SPEED = 0.6, SPORE_RANGE = 8.0;
+    public static final double PULL_RANGE = 10.0, PULL_SPEED = 0.6;
     public static final int PULL_EVERY = 100, SPORE_EVERY = 160, SPORE_TICKS = 100;
+    /**
+     * The other three bosses' fights (docs/DESIGN.md section 15). Each is summoned at its home (a den, a throne, a bud),
+     * fights in an arena this far out, and goes back home, healed, after LEASH_TICKS with no player this near.
+     */
+    public static final int MATRIARCH_RING = 20, MATRIARCH_LEASH = 40, KING_RING = 22, KING_LEASH = 44, BLOOM_LEASH = 32;
+    /** Their phases: the Matriarch's brood at this share of health and her swarm at this; the King's and the Bloom's. */
+    public static final float BROOD_AT = 0.65F, SWARM_AT = 0.3F, THORNCOURT_AT = 0.6F, WILD_ROSE_AT = 0.3F, FEEDING_AT = 0.6F, CARRION_AT = 0.3F;
+    /** A home is spent this long once its boss woke (3 in-game days or nights). */
+    public static final int HOME_REST = 72000;
+    /** The den shakes this long before she bursts out; the King rises, the Bloom opens, for WAKE_TICKS. */
+    public static final int SHAKE_TICKS = 60;
+    /** The Matriarch: her great leap's shadow tell, flight and shockwave; caught in a bush on landing; the thorn fan. */
+    public static final int GREAT_LEAP_TELL = 20, LEAP_FLIGHT = 40, SNAG_TICKS = 40, FAN_TELL = 12, FAN_THORNS = 5;
+    public static final double GREAT_LEAP_RADIUS = 6.0, GREAT_LEAP_FROM = 5.0, BITE_REACH = 3.5, FAN_SPREAD_DEG = 12.0;
+    /** Her calls (3 Thorn Hoppers, CALL_TICKS immune); the pollen crest, then the bloom open; the den's hopper while it stands. */
+    public static final int CALL_HOPPERS = 3, CALL_TICKS = 40, POLLEN_TELL = 20, BLOOM_OPEN_TICKS = 40, DEN_CALL_EVERY = 300;
+    public static final double POLLEN_RADIUS = 4.0;
+    /** Swarm Queen: three dives in a line, each tell this long and each a small shockwave; thorn rain; winded after. */
+    public static final int DIVES = 3, DIVE_TELL = 16, RAIN_TELL = 20, RAIN_CIRCLES = 6, WINDED_TICKS = 50;
+    public static final double DIVE_LENGTH = 6.0, DIVE_RADIUS = 3.0, RAIN_RADIUS = 1.5, RAIN_SPREAD = 6.0;
+    /** How much of her attack each move deals. */
+    public static final float LEAP_SHARE = 1.0F, FAN_SHARE = 0.5F, BITE_SHARE = 1.0F, DIVE_SHARE = 0.8F, RAIN_SHARE = 0.6F;
+    /** The King: the scrape before a charge; tangled in a tree or the bramble wall, or in his own thorn wall. */
+    public static final int SCRAPE_TICKS = 20, TANGLE_TICKS = 40, WALL_TANGLE_TICKS = 50;
+    /** His bramble burst (tell, ring), uproot (tell), thorn walls (tell, length), storm (tell, length) and knuckle slam. */
+    public static final int BURST_TELL = 16, UPROOT_TELL = 20, WALL_TELL = 20, WALL_LENGTH = 12, STORM_TELL = 60, STORM_TICKS = 100,
+            KNUCKLE_TELL = 20, ROSE_STAGGER = 30, GRUBS = 2;
+    public static final double BURST_RADIUS = 5.0, KNUCKLE_RADIUS = 8.0;
+    public static final float CHARGE_SHARE = 1.2F, BURST_SHARE = 0.7F, UPROOT_SHARE = 1.0F, WALL_SHARE = 0.6F, KNUCKLE_SHARE = 1.0F;
+    /** The Bloom: its six vines grow this far out from its bud; the drag's glow tell; the spore puff's tell and cloud. */
+    public static final int VINES = 6, VINE_FROM = 8, VINE_TO = 14, VINE_LENGTH = 4, DRAG_TELL = 14, PUFF_TELL = 20, PETALS = 3;
+    public static final double PUFF_RADIUS = 4.0;
+    /** Feeding: a vine heals it this share every FEED_EVERY; with none left it wilts open; its Blightcaps; the ceiling's clouds. */
+    public static final int FEED_EVERY = 240, STARVED_TICKS = 80, BLIGHTCAPS = 2, CEILING_SPORE_EVERY = 120;
+    public static final float FEED_SHARE = 0.05F;
+    /** Carrion: rooted still, its spore beam sweeps a quarter turn this far, then its heart stays open. */
+    public static final int BEAM_TELL = 30, BEAM_TICKS = 30, HEART_OPEN_TICKS = 40;
+    public static final double BEAM_RANGE = 12.0;
+    public static final float DRAG_SHARE = 0.3F, PUFF_SHARE = 0.5F, PETAL_SHARE = 0.4F, BEAM_SHARE = 0.4F, BLOOM_BITE_SHARE = 1.0F;
     /** The Pearl Pod blinks away from a blow this often (1 in). */
     public static final int POD_DODGE_ONE_IN = 2;
     /** The Void Jelly's every other sting lifts its prey (Levitation) this long. */

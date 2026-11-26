@@ -46,6 +46,10 @@ public final class VerdureItems {
     public static final DeferredItem<SpawnEggItem> MIRE_GHAST_EGG = egg("mire_ghast", VerdureEntities.MIRE_GHAST);
     public static final DeferredItem<SpawnEggItem> DUSK_SPRIG_EGG = egg("dusk_sprig", VerdureEntities.DUSK_SPRIG);
     public static final DeferredItem<SpawnEggItem> MOON_TICK_EGG = egg("moon_tick", VerdureEntities.MOON_TICK);
+    public static final DeferredItem<SpawnEggItem> BLOOMSPROUT_EGG = egg("bloomsprout", VerdureEntities.BLOOMSPROUT);
+    public static final DeferredItem<SpawnEggItem> GLOWGILL_EGG = egg("glowgill", VerdureEntities.GLOWGILL);
+    public static final DeferredItem<SpawnEggItem> DRIPLEAF_TOAD_EGG = egg("dripleaf_toad", VerdureEntities.DRIPLEAF_TOAD);
+    public static final DeferredItem<SpawnEggItem> COIL_SNAIL_EGG = egg("coil_snail", VerdureEntities.COIL_SNAIL);
     /** 1.2's six's eggs. */
     public static final java.util.Map<VerdureRules.Ferox, DeferredItem<SpawnEggItem>> FEROX_EGGS = new java.util.EnumMap<>(VerdureRules.Ferox.class);
 
@@ -75,6 +79,9 @@ public final class VerdureItems {
         }
     }
 
+    /** The Coil Yam: food like a carrot, and its own seed. */
+    public static final DeferredItem<BlockItem> COIL_YAM = ITEMS.registerItem("coil_yam",
+            p -> new BlockItem(VerdureBlocks.COIL_YAMS.get(), p.food(net.minecraft.world.food.Foods.CARROT).useItemDescriptionPrefix()));
     public static final DeferredItem<BlockItem> GRAFTING_BENCH = ITEMS.registerSimpleBlockItem(VerdureBlocks.GRAFTING_BENCH);
     public static final DeferredItem<BlockItem> HOPPER_DEN = ITEMS.registerSimpleBlockItem(VerdureBlocks.HOPPER_DEN);
     public static final DeferredItem<Item> EMBER_GRAFT = ITEMS.registerSimpleItem("ember_graft", () -> new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -83,6 +90,30 @@ public final class VerdureItems {
     public static final DeferredItem<Item> GUIDE_2 = ITEMS.registerSimpleItem("growers_almanac_2", () -> new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> GUIDE_3 = ITEMS.registerSimpleItem("growers_almanac_3", () -> new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SEED_PELLET = ITEMS.registerSimpleItem("seed_pellet");
+
+    // ---- the Crimson Behemoth's fight (docs/DESIGN.md section 14) -------------------------------------------------------
+    public static final DeferredItem<BlockItem> BEHEMOTH_CORE = ITEMS.registerSimpleBlockItem(VerdureBlocks.BEHEMOTH_CORE);
+    public static final DeferredItem<BlockItem> BEHEMOTH_MOUND = ITEMS.registerSimpleBlockItem(VerdureBlocks.BEHEMOTH_MOUND);
+    public static final DeferredItem<RottingOfferingItem> ROTTING_OFFERING = ITEMS.registerItem("rotting_offering", RottingOfferingItem::new,
+            () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> BEHEMOTH_HIDE = ITEMS.registerSimpleItem("behemoth_hide", () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> BEHEMOTH_HEART = ITEMS.registerSimpleItem("behemoth_heart", () -> new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+
+    // ---- the three summoned bosses (docs/DESIGN.md section 15) ---------------------------------------------------------
+    public static final DeferredItem<BlockItem> BRIAR_THRONE = ITEMS.registerSimpleBlockItem(VerdureBlocks.BRIAR_THRONE);
+    public static final DeferredItem<BlockItem> CARRION_BUD = ITEMS.registerSimpleBlockItem(VerdureBlocks.CARRION_BUD);
+    public static final DeferredItem<SummonItem> ROYAL_NECTAR = ITEMS.registerItem("royal_nectar", p -> new SummonItem(p,
+            SummonItem.on((l, at) -> l.getBlockState(at).getBlock() instanceof HopperDenBlock), HopperDenBlock::wake), () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<SummonItem> THORNED_ROSE = ITEMS.registerItem("thorned_rose", p -> new SummonItem(p,
+            SummonItem.on((l, at) -> l.getBlockState(at).getBlock() instanceof BriarThroneBlock), BriarThroneBlock::wake), () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<SummonItem> CARRION_BAIT = ITEMS.registerItem("carrion_bait", p -> new SummonItem(p, CarrionBudBlock::near, CarrionBudBlock::wake),
+            () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> ROYAL_THORNS = ITEMS.registerSimpleItem("royal_thorns", () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> BRIAR_HEARTWOOD = ITEMS.registerSimpleItem("briar_heartwood", () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> CARRION_PETAL = ITEMS.registerSimpleItem("carrion_petal", () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> MATRIARCH_CREST = ITEMS.registerSimpleItem("matriarch_crest", () -> new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    public static final DeferredItem<Item> KINGS_ROSEHIP = ITEMS.registerSimpleItem("kings_rosehip", () -> new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    public static final DeferredItem<Item> CARRION_HEART = ITEMS.registerSimpleItem("carrion_heart", () -> new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     // ---- the hunt's trophies and the charms the Weedwarden trades for them ---------------------------------------------
     public static final Map<Kind, DeferredItem<Item>> TOKENS = new EnumMap<>(Kind.class);
@@ -225,6 +256,20 @@ public final class VerdureItems {
      * entities keeps them out of every other slot.
      */
     public static final DeferredItem<Item>[] WINGS = wings();
+
+    /** 1.20, the plant throwables (VerdureThrown; stats in data/floraferox/fundamentum/thrown/). The grenade and flask
+     *  are used up; the leafrang comes back and the javelin is picked up again, so those two wear. */
+    public static final DeferredItem<VerdureThrown.ThrowItem> RUNED_SEED = ITEMS.registerItem("runed_seed",
+            p -> new VerdureThrown.ThrowItem(p, (l, s) -> new VerdureThrown.RunedSeed(VerdureEntities.RUNED_SEED.get(), l), VerdureThrown.THROW_COOLDOWN),
+            () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<VerdureThrown.ThrowItem> SPORE_FLASK = ITEMS.registerItem("spore_flask",
+            p -> new VerdureThrown.ThrowItem(p, (l, s) -> new VerdureThrown.SporeFlask(VerdureEntities.SPORE_FLASK.get(), l), VerdureThrown.THROW_COOLDOWN),
+            () -> new Item.Properties().stacksTo(16));
+    public static final DeferredItem<com.fundamentum.thrown.ThrownWeaponItem> LEAFRANG = ITEMS.registerItem("leafrang",
+            com.fundamentum.thrown.ThrownWeaponItem::new, () -> new Item.Properties().durability(250));
+    public static final DeferredItem<VerdureThrown.ThrowItem> THORN_JAVELIN = ITEMS.registerItem("thorn_javelin",
+            p -> new VerdureThrown.ThrowItem(p, (l, s) -> new VerdureThrown.ThornJavelin(VerdureEntities.THORN_JAVELIN.get(), l), 0),
+            () -> new Item.Properties().durability(200).rarity(Rarity.UNCOMMON));
 
     @SuppressWarnings("unchecked")
     private static DeferredItem<Item>[] wings() {

@@ -47,6 +47,7 @@ public class RiftNarwhal extends WildFlier {
         entityData.set(TAMED, true);
         setPersistenceRequired();
         setTarget(null);
+        getNavigation().stop();
     }
 
     @Override

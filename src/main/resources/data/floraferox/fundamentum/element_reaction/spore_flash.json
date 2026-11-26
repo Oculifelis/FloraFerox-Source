@@ -1,0 +1,24 @@
+{
+  "trigger": "#fundamentum:element/fire",
+  "aura": "#floraferox:element/spore",
+  "priority": 11,
+  "consume": "all",
+  "burst": {
+    "radius": 2.5,
+    "damage": 3,
+    "scale": 0,
+    "damage_type": "floraferox:scorch",
+    "include_target": true
+  },
+  "fx": {
+    "particle": {
+      "type": "minecraft:flame"
+    },
+    "count": 24,
+    "spread": 0.8,
+    "speed": 0.08,
+    "sound": "minecraft:entity.generic.burn",
+    "volume": 0.8,
+    "pitch": 1.2
+  }
+}

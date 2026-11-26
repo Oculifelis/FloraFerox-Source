@@ -33,6 +33,7 @@ public final class AiTests {
                 VerdureEntities.ferox(Ferox.SNAP_DRAKE), VerdureEntities.MIRE_GHAST.get(), VerdureEntities.PULSE_GNAT.get());
         for (EntityType<? extends Mob> type : types) {
             Mob m = VerdureGameTests.spawn(h, type, new Vec3(3, 0, 0));
+            if (m instanceof BriarKing k) k.phase.to(BriarKing.Phase.COURT);           // past his immune rise
             m.setTarget(pig);
             h.assertTrue(m.getTarget() == null, type + " leaves the charm's wearer be");
             m.hurtServer(level, level.damageSources().mobAttack(pig), 1F);
@@ -69,21 +70,20 @@ public final class AiTests {
         h.assertTrue(!grub.hurtServer(level, level.damageSources().generic(), 1F), "and unhurt");
         h.assertTrue(save(grub).getIntOr("ActTicks", -1) == 7, "with its ticks under");
 
-        WildMob king = VerdureGameTests.spawn(h, VerdureEntities.wild(Wild.CRIMSON_BEHEMOTH), new Vec3(4, 0, 0));
+        WildMob king = VerdureGameTests.spawn(h, VerdureEntities.wild(Wild.BRIAR_KING), new Vec3(4, 0, 0));
         net.minecraft.nbt.CompoundTag charging = new net.minecraft.nbt.CompoundTag();
         charging.putString("Act", "charge");
         charging.putInt("ActTicks", 12);
         charging.putDouble("ChargeX", 0.6);
         charging.putDouble("ChargeZ", 0.8);
         charging.putInt("ChargeCooldown", 90);
-        charging.putInt("VolleyCooldown", 40);
         charging.putInt("Brood", 1);
         charging.putBoolean("Flared", true);
         charging.putLong("Lair", new net.minecraft.core.BlockPos(3, 64, -2).asLong());
         load(level, king, charging);
         net.minecraft.nbt.CompoundTag back = save(king);
         h.assertTrue(king.act() == WildMob.Act.CHARGE && "charge".equals(back.getStringOr("Act", "")), "a charge comes back a charge");
-        for (String k : List.of("ActTicks", "ChargeCooldown", "VolleyCooldown", "Brood")) {
+        for (String k : List.of("ActTicks", "ChargeCooldown", "Brood")) {
             h.assertTrue(back.getIntOr(k, -9) == charging.getIntOr(k, -8), k + " round trips");
         }
         h.assertTrue(back.getDoubleOr("ChargeX", 0) == 0.6 && back.getDoubleOr("ChargeZ", 0) == 0.8, "with its heading");

@@ -1,0 +1,12 @@
+{
+  "item": "floraferox:leafrang",
+  "throw_speed": 1.4,
+  "damage": 5,
+  "pierce": 1,
+  "returns": {
+    "range": 14,
+    "hits_on_return": true
+  },
+  "spin": "flat",
+  "spin_speed": 40
+}

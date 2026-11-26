@@ -1,0 +1,11 @@
+{
+  "item": "floraferox:spore_flask",
+  "throw_speed": 1.1,
+  "gravity": 0.05,
+  "damage": 1,
+  "breaks_on_hit": true,
+  "sticks_in_target": false,
+  "consumable": true,
+  "spin": "tumble",
+  "spin_speed": 20
+}

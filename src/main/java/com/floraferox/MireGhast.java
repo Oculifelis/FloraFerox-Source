@@ -41,6 +41,14 @@ import net.minecraft.world.phys.Vec3;
  * Weak to melee.
  */
 public class MireGhast extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(MireGhast.class, EntityDataSerializers.INT);
     public final MireGhastBrain brain = new MireGhastBrain();
     /** For tests: how many slams landed. */

@@ -25,6 +25,8 @@ public final class AnimState {
     public float glow = 1f;
     /** Where the creature's target is, relative to its body (radians): an eye's pupil or weapon turns toward it. */
     public float lookYaw, lookPitch;
+    /** A boss's phase, 1..3 (the Crimson Behemoth's growths show by it); 0 when it has none. */
+    public int stage;
 
     public static final int FLAG_TAMED = 1;
     public static final int FLAG_SITTING = 2;
@@ -41,7 +43,7 @@ public final class AnimState {
 
     public AnimState reset() {
         age = limbSwing = limbAmount = headYaw = headPitch = action = extra = lookYaw = lookPitch = 0f;
-        mode = flags = 0;
+        mode = flags = stage = 0;
         clocks[0] = clocks[1] = clocks[2] = clocks[3] = -1f;
         glow = 1f;
         return this;

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "spent=false": {
+      "model": "floraferox:block/carrion_bud"
+    },
+    "spent=true": {
+      "model": "floraferox:block/carrion_bud_spent"
+    }
+  }
+}

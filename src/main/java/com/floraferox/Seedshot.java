@@ -35,15 +35,19 @@ import net.minecraft.world.phys.Vec3;
 public class Seedshot extends ThrowableItemProjectile {
     public static final int PLAIN = 0, BLOOM = 1, MEND = 2;
     private static final EntityDataAccessor<Byte> MODE = SynchedEntityData.defineId(Seedshot.class, EntityDataSerializers.BYTE);
+    /** 1.20: synced, so the client draws the strain's trail (it never did: the tier only lived on the server). */
+    private static final EntityDataAccessor<Byte> TIER = SynchedEntityData.defineId(Seedshot.class, EntityDataSerializers.BYTE);
+    /** 1.20: synced, so the client predicts the same arc as the server (it flew the shot flat, then snapped). */
+    private static final EntityDataAccessor<Float> GRAVITY = SynchedEntityData.defineId(Seedshot.class, EntityDataSerializers.FLOAT);
     private ItemStack weapon = ItemStack.EMPTY;
     private DamageClass cls = DamageClass.RANGED;
     private float damage = 4F;
-    private int tier = 1;
     private int life = 40;
-    private double gravity = 0.0;
     private boolean homing;
     /** 1.3: a Burr Pellet's hooks slow what it hits. */
     private boolean clinging;
+    /** A mob's shot of an element (VerdureElements): its damage type in place of its class's. */
+    private net.minecraft.resources.ResourceKey<net.minecraft.world.damagesource.DamageType> element;
 
     public Seedshot(EntityType<? extends Seedshot> type, Level level) {
         super(type, level);
@@ -53,13 +57,18 @@ public class Seedshot extends ThrowableItemProjectile {
         super(VerdureEntities.SHOT.get(), owner, level, new ItemStack(sprite));
         this.cls = cls;
         this.damage = damage;
-        this.tier = tier;
         this.life = life;
-        this.gravity = gravity;
+        entityData.set(TIER, (byte) tier);
+        entityData.set(GRAVITY, (float) gravity);
     }
 
     public Seedshot clinging() {
         clinging = true;
+        return this;
+    }
+
+    public Seedshot element(net.minecraft.resources.ResourceKey<net.minecraft.world.damagesource.DamageType> type) {
+        element = type;
         return this;
     }
 
@@ -68,8 +77,9 @@ public class Seedshot extends ThrowableItemProjectile {
         return this;
     }
 
-    /** 1.16: a gun's shot is seed magic (VerdureDamage.SEED_BOLT); every other shot deals its class's type. */
+    /** A gun's shot deals VerdureDamage.SEED_BOLT (ranged again since 1.20); every other shot deals its class's type. */
     private DamageSource source(ServerLevel sl, Entity owner) {
+        if (element != null) return VerdureDamage.source(sl, element, this, owner);
         return weapon.getItem() instanceof VerdureWeapons.BloomGun ? VerdureDamage.source(sl, VerdureDamage.SEED_BOLT, this, owner)
                 : VerdureDamage.source(sl, cls, this, owner);
     }
@@ -94,6 +104,12 @@ public class Seedshot extends ThrowableItemProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MODE, (byte) PLAIN);
+        builder.define(TIER, (byte) 1);
+        builder.define(GRAVITY, 0F);
+    }
+
+    public int tier() {
+        return entityData.get(TIER);
     }
 
     @Override
@@ -120,15 +136,16 @@ public class Seedshot extends ThrowableItemProjectile {
 
     @Override
     protected double getDefaultGravity() {
-        return gravity;
+        return entityData.get(GRAVITY);
     }
 
     @Override
     public void tick() {
         super.tick();
         if (level().isClientSide()) {
+            int tier = tier();
             if (tier == 2) level().addParticle(ParticleTypes.SMALL_FLAME, getX(), getY(), getZ(), 0, 0, 0);
-            if (tier == 3) level().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY(), getZ(), 0, 0, 0);
+            if (tier == 3 && tickCount % 2 == 0) level().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY(), getZ(), 0, 0, 0);
             return;
         }
         if (mode() == MEND && tickCount > 2) {                 // a Heartmend shot seeks the nearest ally ahead
@@ -182,8 +199,11 @@ public class Seedshot extends ThrowableItemProjectile {
         }
         DamageSource src = source(sl, getOwner());
         float dmg = weapon.isEmpty() ? damage : EnchantmentHelper.modifyDamage(sl, weapon, target, src, damage);
+        // 1.20 fix: a gun fires faster than the 10-tick hurt window (Rime Repeater 8 ticks, Quickdraw less), so every
+        // other shot hit for nothing; a gun shot ignores the window, as each shot already waits on the gun's cooldown.
+        if (weapon.getItem() instanceof VerdureWeapons.BloomGun) target.invulnerableTime = 0;
         if (target.hurtServer(sl, src, dmg)) {
-            strain(target, tier);
+            strain(target, tier());
             if (clinging) target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, VerdureRules.CHARM_SLOW_TICKS, 0), getOwner() instanceof LivingEntity o ? o : null);
         }
     }
@@ -201,9 +221,18 @@ public class Seedshot extends ThrowableItemProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (level() instanceof ServerLevel sl) {
+            int tier = tier();
             if (mode() == BLOOM) burst(sl, result instanceof EntityHitResult eh ? eh.getEntity() : null);
-            sl.sendParticles(tier == 3 ? ParticleTypes.SNOWFLAKE : tier == 2 ? ParticleTypes.FLAME : ParticleTypes.COMPOSTER,
-                    getX(), getY(), getZ(), 8, 0.2, 0.2, 0.2, 0.02);
+            if (weapon.getItem() instanceof VerdureWeapons.BloomGun) {   // 1.20: a seed shell splits: husk bits and the strain's spark
+                sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, (tier == 3 ? net.minecraft.world.level.block.Blocks.PACKED_ICE
+                        : tier == 2 ? net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS : net.minecraft.world.level.block.Blocks.MOSS_BLOCK).defaultBlockState()), getX(), getY(), getZ(), 6, 0.1, 0.1, 0.1, 0.08);
+                sl.sendParticles(tier == 3 ? ParticleTypes.SNOWFLAKE : tier == 2 ? ParticleTypes.SMALL_FLAME : ParticleTypes.COMPOSTER,
+                        getX(), getY(), getZ(), 5, 0.15, 0.15, 0.15, 0.02);
+                if (tier == 2) sl.sendParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(), 3, 0.1, 0.1, 0.1, 0.01);
+            } else {
+                sl.sendParticles(tier == 3 ? ParticleTypes.SNOWFLAKE : tier == 2 ? ParticleTypes.FLAME : ParticleTypes.COMPOSTER,
+                        getX(), getY(), getZ(), 8, 0.2, 0.2, 0.2, 0.02);
+            }
             discard();
         }
     }
@@ -213,6 +242,7 @@ public class Seedshot extends ThrowableItemProjectile {
      * Scorch Spitter's ring of flame sets it alight, the Rime Repeater's frost nova slows and chills it.
      */
     private void burst(ServerLevel sl, Entity hit) {
+        int tier = tier();
         double r = GunEnchants.BLOOM_RADIUS;
         Entity owner = getOwner();
         for (int i = 0; i < 24; i++) {

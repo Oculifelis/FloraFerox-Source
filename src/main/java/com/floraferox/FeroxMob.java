@@ -40,6 +40,14 @@ import net.minecraft.world.phys.Vec3;
  * timings in VerdureRules.Ferox); each is one of the four families and shares that family's weakness.
  */
 public class FeroxMob extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(FeroxMob.class, EntityDataSerializers.INT);
     public final Ferox profile;
     public final StrikeBrain brain;
@@ -163,6 +171,8 @@ public class FeroxMob extends Monster {
                 && burrCooldown == 0 && hasLineOfSight(t)) {                              // it flings a clinging burr
             burrCooldown = BURR_COOLDOWN;
             Seedshot s = new Seedshot(level, this, VerdureItems.SHOTS.get("pulse_dart").get(), DamageClass.RANGED, (float) ATTACK * 0.75F, 1, 40, 0.0);
+            String element = VerdureElements.element(this, VerdureElements.Attack.MAIN);
+            if (element != null) s.element(VerdureElements.type(element));
             s.clinging();
             Vec3 from = getEyePosition(), aim = t.getBoundingBox().getCenter().subtract(from);
             s.setPos(from.add(aim.normalize().scale(getBbWidth() * 0.5 + 0.3)));

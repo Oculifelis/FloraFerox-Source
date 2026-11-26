@@ -1,0 +1,10 @@
+{
+  "values": {
+    "#floraferox:element/spore": {
+      "aura": "#floraferox:element/spore",
+      "strength": 1,
+      "duration": 160,
+      "max_stacks": 3
+    }
+  }
+}

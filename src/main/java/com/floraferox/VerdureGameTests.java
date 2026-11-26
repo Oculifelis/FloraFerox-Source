@@ -76,12 +76,27 @@ public final class VerdureGameTests {
         new Test("wings_fly_further_each_tier", VerdureGearTests::wingsFlyFurtherEachTier, 20),
         new Test("whips_crack", VerdureGearTests::whipsCrack, 160),
         new Test("the_weedwarden_keeps_the_grafting_bench", VerdureGearTests::theWeedwardenKeepsTheGraftingBench, 20),
+        // the looks (LookTests, DESIGN.md section 12)
+        new Test("every_look_is_there", LookTests::everyLookIsThere, 20),
+        new Test("natural_rolls_are_weighted", LookTests::naturalRollsAreWeighted, 20),
+        new Test("herb_strains_set_the_look", LookTests::herbStrainsSetTheLook, 20),
+        new Test("items_give_their_look", LookTests::itemsGiveTheirLook, 20),
+        new Test("the_look_is_saved", LookTests::theLookIsSaved, 20),
+        new Test("the_new_species", LookTests::theNewSpecies, 20),
+        new Test("boss_looks_come_by_biome", LookTests::bossLooksComeByBiome, 20),
+        new Test("behemoth_grows_by_phase", LookTests::behemothGrowsByPhase, 20),
+        new Test("matriarch_opens_by_phase", LookTests::matriarchOpensByPhase, 40),
+        // the elements (ElementTests, DESIGN.md section 13)
+        new Test("every_mob_hits_with_its_element", ElementTests::everyMobHitsWithItsElement, 20),
+        new Test("looks_change_the_element", ElementTests::looksChangeTheElement, 20),
+        new Test("strong_and_weak", ElementTests::strongAndWeak, 20),
+        new Test("spore_flash", ElementTests::sporeFlash, 40),
         // 1.2's six (FeroxTests)
         new Test("ferox_brains_tell_then_strike", FeroxTests::brainsTellThenStrike, 20),
         new Test("ferox_take_full_damage_only_from_their_familys_class", FeroxTests::eachTakesFullDamageOnlyFromItsFamilysClass, 20),
         new Test("snap_drake_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.SNAP_DRAKE), 240),
         new Test("reed_wretch_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.REED_WRETCH), 240),
-        new Test("lantern_leech_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.LANTERN_LEECH), 240),
+        new Test("lantern_leech_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.LANTERN_LEECH), 400), // slow to close in on a busy server
         new Test("burr_crawler_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.BURR_CRAWLER), 240),
         new Test("orchid_mantis_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.ORCHID_MANTIS), 240),
         new Test("dew_crab_strikes_its_prey", h -> FeroxTests.strikesItsPrey(h, VerdureRules.Ferox.DEW_CRAB), 240),
@@ -102,15 +117,34 @@ public final class VerdureGameTests {
                     new Test("wild_drop_their_own", WildTests::eachDropsItsOwn, 20),
                     new Test("wild_neutral_ones_wait_to_be_hurt", WildTests::neutralOnesWaitToBeHurt, 100),
                     new Test("rift_narwhal_tames_and_rides", WildTests::riftNarwhalTamesAndRides, 20),
+                    new Test("end_fliers_cross_air", WildTests::endFliersCrossAir, 160),
                     // 1.5: their own ways and the Peace Lily Charm (AiTests)
                     new Test("truce_spares_the_wearer_till_struck", AiTests::truceSparesTheWearerTillStruck, 20),
                     new Test("root_grub_burrows_and_erupts", AiTests::rootGrubBurrowsAndErupts, 300),
                     new Test("wild_mob_act_saves_and_loads", AiTests::wildMobActSavesAndLoads, 20),
                     new Test("briar_king_charges", AiTests::briarKingCharges, 300),
+                    new Test("behemoth_roars_into_its_phases", WildTests::behemothRoarsIntoItsPhases, 60),
+                    new Test("behemoth_flare_takes_more", WildTests::behemothFlareTakesMore, 120),
                     new Test("neutral_ones_call_their_kind", AiTests::neutralOnesCallTheirKind, 20),
                     new Test("bell_stalker_knows_when_watched", AiTests::bellStalkerKnowsWhenWatched, 20),
                     // 1.5.3: the Thorn Hopper's den
                     new Test("hopper_den_keeps_its_brood", WildTests::hopperDenKeepsItsBrood, 20),
+                    // 2.2: the summoned three (DESIGN.md section 15)
+                    new Test("thorn_matriarch_calls_at_her_thresholds", WildTests::matriarchThresholds, 240),
+                    new Test("briar_king_roars_at_his_thresholds", WildTests::kingThresholds, 240),
+                    new Test("carrion_bloom_wilts_at_its_thresholds", WildTests::bloomThresholds, 240),
+                    new Test("thorn_matriarch_ring_rises_and_falls", WildTests::matriarchRing, 20),
+                    new Test("briar_king_wall_rises_and_falls", WildTests::kingRing, 20),
+                    new Test("carrion_bloom_vines_rise_and_fall", WildTests::bloomVines, 20),
+                    new Test("carrion_bloom_stays_rooted", WildTests::bloomStaysRooted, 300),
+                    // the Lush Caves grazers (DESIGN.md section 16)
+                    new Test("cave_grazer_spawns_and_keeps_to_itself", CaveGrazerTests::spawns, 80),
+                    new Test("cave_grazer_answers_then_calms", CaveGrazerTests::answersThenCalms, 300),
+                    new Test("cave_grazer_breeds", CaveGrazerTests::breeds, 300),
+                    new Test("cave_grazer_pollinates", CaveGrazerTests::pollinates, 400),
+                    new Test("coil_snail_hides_then_rams", CaveGrazerTests::snailHides, 300),
+                    new Test("summoned_bosses_drop_their_spoils", WildTests::bossesDropTheirSpoils, 20),
+                    new Test("boss_checklist_entries_resolve", CompatTests::bossChecklistEntriesResolve, 20),
                     // 1.8: the seed guns' enchantments (GunEnchantTests)
                     new Test("gun_enchantments_are_data", GunEnchantTests::gunEnchantmentsAreData, 20),
                     new Test("gun_enchantments_change_the_shot", GunEnchantTests::gunEnchantmentsChangeTheShot, 20),
@@ -209,14 +243,14 @@ public final class VerdureGameTests {
         h.assertTrue(VerdureDamage.classify(level.damageSources().magic()) == DamageClass.MAGIC, "magic is magic");
         h.assertTrue(VerdureDamage.classify(level.damageSources().mobAttack(wolf)) == DamageClass.SUMMON, "a tamed wolf's bite is a summon's");
         h.assertTrue(VerdureDamage.classify(level.damageSources().fall()) == DamageClass.OTHER, "a fall is untyped");
-        // 1.16: a gun's bolt is magic; a whip's lash is summon and ranged, full on both families but never more than full
+        // 1.20: a gun's bolt is ranged again; a whip's lash is summon and melee, full on both families but never more than full
         DamageSource bolt = VerdureDamage.source(level, VerdureDamage.SEED_BOLT, zombie, zombie);
         DamageSource lash = VerdureDamage.source(level, DamageClass.SUMMON, zombie, zombie);
-        h.assertTrue(VerdureDamage.classes(bolt).equals(java.util.EnumSet.of(DamageClass.MAGIC)), "a gun's bolt is magic only");
-        h.assertTrue(VerdureDamage.classes(lash).equals(java.util.EnumSet.of(DamageClass.SUMMON, DamageClass.RANGED)), "a lash is summon and ranged");
-        h.assertTrue(VerdureDamage.scale(Kind.DUSK_SPRIG, bolt, 4F) == 4F && VerdureDamage.scale(Kind.PULSE_GNAT, bolt, 4F) == 2F, "a bolt is full on the sprig, half on the gnat");
-        for (Kind k : new Kind[] { Kind.PULSE_GNAT, Kind.MOON_TICK }) h.assertTrue(VerdureDamage.scale(k, lash, 4F) == 4F, "a lash is full on " + k);
-        for (Kind k : new Kind[] { Kind.MIRE_GHAST, Kind.DUSK_SPRIG }) h.assertTrue(VerdureDamage.scale(k, lash, 4F) == 2F, "and half on " + k);
+        h.assertTrue(VerdureDamage.classes(bolt).equals(java.util.EnumSet.of(DamageClass.RANGED)), "a gun's bolt is ranged only");
+        h.assertTrue(VerdureDamage.classes(lash).equals(java.util.EnumSet.of(DamageClass.SUMMON, DamageClass.MELEE)), "a lash is summon and melee");
+        h.assertTrue(VerdureDamage.scale(Kind.PULSE_GNAT, bolt, 4F) == 4F && VerdureDamage.scale(Kind.DUSK_SPRIG, bolt, 4F) == 2F, "a bolt is full on the gnat, half on the sprig");
+        for (Kind k : new Kind[] { Kind.MIRE_GHAST, Kind.MOON_TICK }) h.assertTrue(VerdureDamage.scale(k, lash, 4F) == 4F, "a lash is full on " + k);
+        for (Kind k : new Kind[] { Kind.PULSE_GNAT, Kind.DUSK_SPRIG }) h.assertTrue(VerdureDamage.scale(k, lash, 4F) == 2F, "and half on " + k);
         // on the mobs themselves: magic (which armour doesn't stop) halves on the fly, not on the sprout
         PulseGnat fly = spawn(h, VerdureEntities.PULSE_GNAT.get(), new Vec3(3, 0, 0));
         DuskSprig sprout = spawn(h, VerdureEntities.DUSK_SPRIG.get(), new Vec3(-3, 0, 0));

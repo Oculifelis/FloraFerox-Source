@@ -96,25 +96,25 @@ final class GunEnchantTests {
         FakePlayer fp = VerdureGearTests.player(h, new Vec3(0, 0, -4), 0F, 0F);
         ItemStack inf = gun(level, 1, GunEnchants.INFINITY, 1);
         fp.setItemInHand(InteractionHand.MAIN_HAND, inf);
-        h.assertTrue(inf.getItem().use(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "Infinity fires with no Seed Pellets");
+        h.assertTrue(((VerdureWeapons.BloomGun) inf.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "Infinity fires with no Seed Pellets");
 
         ItemStack plain = gun(level, 1);
         fp.setItemInHand(InteractionHand.MAIN_HAND, plain);
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 1));
-        plain.getItem().use(level, fp, InteractionHand.MAIN_HAND);
+        ((VerdureWeapons.BloomGun) plain.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND);
         double plainSpeed = lastShot(h).getDeltaMovement().length();
         h.assertTrue(lastShot(h).mode() == Seedshot.PLAIN, "a plain gun fires a plain shot");
 
         ItemStack quick = gun(level, 1, GunEnchants.QUICKDRAW, 3);
         fp.setItemInHand(InteractionHand.MAIN_HAND, quick);
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 1));
-        quick.getItem().use(level, fp, InteractionHand.MAIN_HAND);
+        ((VerdureWeapons.BloomGun) quick.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND);
         h.assertTrue(lastShot(h).getDeltaMovement().length() > plainSpeed * 1.3, "Quickdraw III fires faster");
 
         ItemStack bloom = gun(level, 2, GunEnchants.BLOOM_SHOT, 1);
         fp.setItemInHand(InteractionHand.MAIN_HAND, bloom);
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 1));
-        bloom.getItem().use(level, fp, InteractionHand.MAIN_HAND);
+        ((VerdureWeapons.BloomGun) bloom.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND);
         Seedshot b = lastShot(h);
         h.assertTrue(b.mode() == Seedshot.BLOOM && b.getDeltaMovement().length() < plainSpeed * 0.7, "Bloom Shot fires a slower Bloom shot");
         clearShots(h);
@@ -124,7 +124,7 @@ final class GunEnchantTests {
         fp.getInventory().clearContent();
         fp.setItemInHand(InteractionHand.MAIN_HAND, hopper);
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 60));
-        for (int i = 0; i < 60; i++) hopper.getItem().use(level, fp, InteractionHand.MAIN_HAND);
+        for (int i = 0; i < 60; i++) ((VerdureWeapons.BloomGun) hopper.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND);
         int left = VerdureWeapons.BloomGun.ammo(fp).getCount();
         h.assertTrue(left >= 8 && left <= 35, "Seed Hopper saves about a third of 60 pellets, " + left + " left");
         clearShots(h);
@@ -132,7 +132,7 @@ final class GunEnchantTests {
         ItemStack mend = gun(level, 1, GunEnchants.HEARTMEND, 1);
         fp.setItemInHand(InteractionHand.MAIN_HAND, mend);
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 1));
-        mend.getItem().use(level, fp, InteractionHand.MAIN_HAND);
+        ((VerdureWeapons.BloomGun) mend.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND);
         Seedshot m = lastShot(h);
         Zombie zombie = VerdureGearTests.mob(h, EntityType.ZOMBIE, new Vec3(2, 0, 0));
         Pig pig = VerdureGearTests.mob(h, EntityType.PIG, new Vec3(-2, 0, 0));

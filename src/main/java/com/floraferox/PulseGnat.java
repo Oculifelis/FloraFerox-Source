@@ -38,6 +38,14 @@ import net.minecraft.world.phys.Vec3;
  * prey and darts through it in a "heart shot" (PulseGnatBrain). Weak to ranged attacks.
  */
 public class PulseGnat extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(PulseGnat.class, EntityDataSerializers.INT);
     public final PulseGnatBrain brain = new PulseGnatBrain();
     private Vec3 dart = Vec3.ZERO;

@@ -17,6 +17,11 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
+// the dev client check (src/clientcheck) is compiled only for gradlew runClient -Pclientcheck
+if (project.hasProperty('clientcheck')) {
+    sourceSets.main.java.srcDir 'src/clientcheck/java'
+}
+
 neoForge {
     version = project.neo_version
 
@@ -27,6 +32,12 @@ neoForge {
             jvmArgument '-Xmx3G'
             // Fundamentum's WindowMixin opens the test window without focus
             systemProperty 'fundamentum.nofocus', 'true'
+            // gradlew runClient -Pclientcheck: src/clientcheck's ClientCheck fires the guns, throws the throwables and flies
+            // the wings off screen, muted, without the mouse, in its own run-clientcheck folder, then closes (never in a jar)
+            if (project.hasProperty('clientcheck')) {
+                systemProperty 'floraferox.clientcheck', 'true'
+                gameDirectory = project.file('run-clientcheck')
+            }
         }
         server {
             server()
@@ -110,8 +121,17 @@ dependencies {
     if (providers.gradleProperty('withJei').isPresent()) localRuntime "mezz.jei:jei-26.1.2-neoforge:29.47.0.111"
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    // -PextraModsDir=<folder>: dev runs also load every jar there (e.g. Boss Checklist for its GameTest)
+    if (providers.gradleProperty('extraModsDir').isPresent()) localRuntime fileTree(providers.gradleProperty('extraModsDir').get()) { include '*.jar' }
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+// LGPL-3.0-or-later code: the licence texts and credits ship in the jar's META-INF
+tasks.named('jar') {
+    from([file('LICENSE'), file('COPYING'), file('CREDITS.md')]) {
+        into 'META-INF'
+    }
 }

@@ -40,7 +40,11 @@ import org.joml.Vector3f;
  * and a glowing seed at its head.</li>
  * <li>Hearts (1.11, the seed gun's plain shot, Oculifelis 2026-11-04: "i liked when they shot a heart shaped shot"):
  * the heart that spins in a Bloom Shot or Heartmend mote, held upright and rocking a little, in its halo, with the
- * dart's streak behind it.</li>
+ * dart's streak behind it. Retired from the guns' plain shot in 1.20; the Heartmend mote keeps its heart.</li>
+ * <li>Seeds (1.20, the seed gun's plain shot, Oculifelis 2026-11-11: "non heart shaped shots", then "i still like the
+ * shot being fx not png"): drawn as light like the heart was, from white glow masks (textures/entity/shot/seed_glow.png
+ * and seed_vein_*.png, tools/gen/verdure/seedshot_art.py) laid along the flight, thorn first: the body in the strain's
+ * colour, its vein, cracks or frost in the second, a white-hot thorn point, a halo and the heart's two-tone streak.</li>
  * </ul>
  * Which look a shot takes comes from its sprite item's id (VerdureItems.SHOTS); textures are in
  * textures/entity/shot/. Register {@link #GLOW} in RegisterRenderPipelinesEvent.
@@ -62,7 +66,7 @@ public class ShotFxRenderer extends EntityRenderer<Seedshot, ShotFxRenderer.Stat
 
     private static final Map<Identifier, RenderType> TYPES = new ConcurrentHashMap<>();
     private static final int FULL_BRIGHT = 15728880;
-    private static final int ARC = 0, MOTE = 1, DART = 2, HEART = 3;
+    private static final int ARC = 0, MOTE = 1, DART = 2, HEART = 3, SEED = 4;
     private static final int FRAMES = 8;
 
     /** A shot's look: its kind, colours (main, second) and size; an arc's flipbook is its id. */
@@ -75,9 +79,11 @@ public class ShotFxRenderer extends EntityRenderer<Seedshot, ShotFxRenderer.Stat
         "dusk_mote", new Look(MOTE, 0xFFC27A, 0xFF8A70, 0.17F),
         "ember_mote", new Look(MOTE, 0xFF9A2E, 0xE04A14, 0.17F),
         "rime_mote", new Look(MOTE, 0xC8F0FF, 0x6FB8F0, 0.17F),
-        "pulse_dart", new Look(HEART, 0xFF5AB4, 0xFFB0E0, 0.16F),
-        "flare_dart", new Look(HEART, 0xFFB040, 0xFF5A14, 0.16F),
-        "rime_dart", new Look(HEART, 0xB8F0FF, 0x5EA8E8, 0.16F));
+        "pulse_dart", new Look(SEED, 0x86D23E, 0xFF3AA0, 0.2F),
+        "flare_dart", new Look(SEED, 0x9A3A16, 0xFFB040, 0.2F),
+        "rime_dart", new Look(SEED, 0x9CDCFF, 0xFFFFFF, 0.2F));
+    /** 1.20: each gun's seed detail mask, by its dart: the pulse vein, the scorch cracks, the rime frost. */
+    private static final Map<String, String> VEINS = Map.of("pulse_dart", "seed_vein_pulse", "flare_dart", "seed_vein_scorch", "rime_dart", "seed_vein_rime");
     private static final Look FALLBACK = new Look(MOTE, 0xFFFFFF, 0xC0FFC0, 0.15F);
     /** 1.8: a seed gun's Bloom Shot, by its dart: a big magenta pulse, a fire bomb, an ice shard. */
     private static final Map<String, Look> BLOOMS = Map.of(
@@ -126,6 +132,7 @@ public class ShotFxRenderer extends EntityRenderer<Seedshot, ShotFxRenderer.Stat
             case ARC -> this.arc(s, pose, collector, camera);
             case DART -> this.dart(s, pose, collector, camera);
             case HEART -> this.heart(s, pose, collector, camera);
+            case SEED -> this.seed(s, pose, collector, camera);
             default -> this.mote(s, pose, collector, camera);
         }
         pose.popPose();
@@ -203,6 +210,66 @@ public class ShotFxRenderer extends EntityRenderer<Seedshot, ShotFxRenderer.Stat
         this.billboard(pose, collector, camera, tex("halo"), l.size * 1.8F, argb(120, l.color), 0.0F);
         this.billboard(pose, collector, camera, tex("core"), l.size * 0.8F, argb(255, l.color2), 0.0F);
         this.billboard(pose, collector, camera, tex("core"), l.size * 0.4F, argb(240, 0xFFFFFF), 0.0F);
+    }
+
+    /**
+     * 1.20 round 2: a seed drawn as light, thorn first: its glowing body along the flight in the strain's colour, the
+     * strain's vein (pulse), cracks (scorch) or frost (rime) over it in the second colour, a white-hot thorn point, in
+     * its halo with the heart's two-tone streak behind.
+     */
+    private void seed(State s, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
+        Look l = s.look;
+        float pulse = 1.0F + 0.08F * Mth.sin(s.age * 1.9F + s.seed);
+        int veinA = (int) (215 + 40 * Mth.sin(s.age * 1.9F + s.seed));
+        RenderType vein = glow(tex(VEINS.getOrDefault(s.shot, "seed_vein_pulse")));
+        this.billboard(pose, collector, camera, tex("halo"), l.size * 2.4F * pulse, argb(85, l.color), 0.0F);
+        Vec3 side = side(s, camera);
+        float r = l.size * 1.25F;
+        if (side == null) {                                    // flying straight at the eye (or still): face on
+            pose.pushPose();
+            pose.mulPose(camera.orientation);
+            collector.submitCustomGeometry(pose, glow(tex("seed_glow")), (p, b) -> quad(b, p, r, argb(255, l.color)));
+            collector.submitCustomGeometry(pose, vein, (p, b) -> quad(b, p, r, argb(veinA, l.color2)));
+            pose.popPose();
+            this.billboard(pose, collector, camera, tex("core"), l.size * 0.18F, argb(230, 0xFFFFFF), 0.0F);
+            return;
+        }
+        Vec3 dir = s.velocity.normalize();
+        float len = 0.3F + Math.min(0.45F, (float) s.velocity.length() * 0.18F);
+        Vector3f tail = new Vector3f((float) (-dir.x * (len + r * 0.7F)), (float) (-dir.y * (len + r * 0.7F)), (float) (-dir.z * (len + r * 0.7F)));
+        Vector3f mid = new Vector3f((float) (-dir.x * r * 0.8F), (float) (-dir.y * r * 0.8F), (float) (-dir.z * r * 0.8F));
+        Vector3f wide = new Vector3f((float) side.x, (float) side.y, (float) side.z).mul(l.size * 0.55F);
+        Vector3f thin = new Vector3f(wide).mul(0.4F);
+        collector.submitCustomGeometry(pose, glow(tex("streak")), (p, b) -> {
+            ribbon(b, p, tail, mid, wide, 0.0F, 1.0F, argb(130, l.color));
+            ribbon(b, p, tail, mid, thin, 0.0F, 1.0F, argb(200, l.color2));
+        });
+        // the masks: u runs base to thorn along the flight, v across it
+        Vector3f back = new Vector3f((float) (-dir.x * r), (float) (-dir.y * r), (float) (-dir.z * r));
+        Vector3f front = new Vector3f((float) (dir.x * r), (float) (dir.y * r), (float) (dir.z * r));
+        Vector3f across = new Vector3f((float) side.x, (float) side.y, (float) side.z).mul(r);
+        collector.submitCustomGeometry(pose, glow(tex("seed_glow")), (p, b) -> along(b, p, back, front, across, argb(255, l.color)));
+        collector.submitCustomGeometry(pose, vein, (p, b) -> along(b, p, back, front, across, argb(veinA, l.color2)));
+        pose.pushPose();                                       // the thorn's white-hot point
+        pose.translate(front.x * 0.9F, front.y * 0.9F, front.z * 0.9F);
+        this.billboard(pose, collector, camera, tex("core"), l.size * 0.18F, argb(230, 0xFFFFFF), 0.0F);
+        pose.popPose();
+    }
+
+    /** A square mask of half size {@code r} facing +z (under the camera's orientation, the eye). */
+    private static void quad(VertexConsumer b, PoseStack.Pose p, float r, int argb) {
+        v(b, p, -r, -r, 0, 0, 1, argb);
+        v(b, p, r, -r, 0, 1, 1, argb);
+        v(b, p, r, r, 0, 1, 0, argb);
+        v(b, p, -r, r, 0, 0, 0, argb);
+    }
+
+    /** A mask laid from {@code back} (u 0) to {@code front} (u 1), {@code across} wide each way (v 1 to v 0). */
+    private static void along(VertexConsumer b, PoseStack.Pose p, Vector3f back, Vector3f front, Vector3f across, int argb) {
+        v(b, p, back.x - across.x, back.y - across.y, back.z - across.z, 0, 1, argb);
+        v(b, p, front.x - across.x, front.y - across.y, front.z - across.z, 1, 1, argb);
+        v(b, p, front.x + across.x, front.y + across.y, front.z + across.z, 1, 0, argb);
+        v(b, p, back.x + across.x, back.y + across.y, back.z + across.z, 0, 0, argb);
     }
 
     /** A glowing heart, upright and rocking, in its halo, with a short streak behind it. */

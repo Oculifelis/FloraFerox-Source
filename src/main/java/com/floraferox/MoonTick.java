@@ -33,6 +33,14 @@ import net.minecraft.world.phys.Vec3;
  * hurts what it touches (MoonTickBrain). Weak to summons.
  */
 public class MoonTick extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(MoonTick.class, EntityDataSerializers.INT);
     public final MoonTickBrain brain = new MoonTickBrain();
     private int touchCooldown;

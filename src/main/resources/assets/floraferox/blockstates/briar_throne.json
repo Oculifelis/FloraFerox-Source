@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "spent=false": {
+      "model": "floraferox:block/briar_throne"
+    },
+    "spent=true": {
+      "model": "floraferox:block/briar_throne_spent"
+    }
+  }
+}

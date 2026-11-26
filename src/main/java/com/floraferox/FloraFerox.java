@@ -15,6 +15,7 @@ public final class FloraFerox {
 
     public FloraFerox(IEventBus modBus) {
         VerdureEntities.ENTITIES.register(modBus);
+        Looks.ATTACHMENTS.register(modBus);
         VerdureBlocks.BLOCKS.register(modBus);
         VerdureBlocks.MENUS.register(modBus);
         VerdureBlocks.FEATURES.register(modBus);

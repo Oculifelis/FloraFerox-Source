@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "spent=false": {
+      "model": "floraferox:block/behemoth_core"
+    },
+    "spent=true": {
+      "model": "floraferox:block/behemoth_core_spent"
+    }
+  }
+}

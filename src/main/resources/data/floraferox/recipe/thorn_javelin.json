@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "T": "minecraft:rose_bush",
+    "S": "minecraft:stick",
+    "R": "minecraft:hanging_roots"
+  },
+  "pattern": [
+    "  T",
+    " S ",
+    "R  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:thorn_javelin"
+  }
+}

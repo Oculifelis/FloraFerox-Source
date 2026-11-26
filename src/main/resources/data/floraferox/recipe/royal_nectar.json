@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:honey_bottle",
+    "minecraft:sweet_berries",
+    "minecraft:rose_bush",
+    "floraferox:pulseroot_token"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:royal_nectar"
+  }
+}

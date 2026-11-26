@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "spent=false": {
+      "model": "floraferox:block/thorn_hopper_den"
+    },
+    "spent=true": {
       "model": "floraferox:block/thorn_hopper_den"
     }
   }

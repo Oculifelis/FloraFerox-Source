@@ -115,8 +115,10 @@ public final class VerdureWeapons {
     }
 
     /**
-     * A gun (magic since 1.16: its shots are seed magic): use fires a Seed Pellet or (1.3) a Burr Pellet, which slows, spent from the inventory (never in creative).
-     * 1.8: its enchantments (GunEnchants) change the cooldown, the shot and what ammo is spent.
+     * A gun (ranged; 1.16 made it magic, 1.20 puts it back): left click (GunTrigger) fires a Seed Pellet or (1.3) a Burr Pellet, which slows, spent from the inventory (never in creative).
+     * 1.8: its enchantments (GunEnchants) change the cooldown, the shot and what ammo is spent. 1.20: each strain has its own
+     * feel: the Pulse Pistol a quick snap, the Scorch Spitter a wide, dropping spit of embers, the Rime Repeater a fast,
+     * flat, tight needle; the shot flies along the view, not carried by the shooter's own motion.
      */
     public static class BloomGun extends Item {
         private final int tier;
@@ -138,10 +140,10 @@ public final class VerdureWeapons {
             return tier;
         }
 
-        /** Right click still fires; left click is the trigger (GunTrigger), as Quiverfall's guns. */
+        /** 1.20 (Oculifelis: "left click only"): right click does nothing; left click is the trigger (GunTrigger). */
         @Override
         public InteractionResult use(Level level, Player player, InteractionHand hand) {
-            return shoot(level, player, hand);
+            return InteractionResult.PASS;
         }
 
         /** One shot from the gun in {@code hand}, if there are pellets (or Infinity); callers check the cooldown. */
@@ -157,8 +159,8 @@ public final class VerdureWeapons {
                 // 1.8: the gun's enchantments (GunEnchants)
                 int quick = GunEnchants.level(stack, GunEnchants.QUICKDRAW);
                 boolean bloom = GunEnchants.has(stack, GunEnchants.BLOOM_SHOT), mend = GunEnchants.has(stack, GunEnchants.HEARTMEND);
-                float cdBase = GUN_COOLDOWN[tier] * VerdureGear.cooldownFactor(player, DamageClass.MAGIC) * (1F - GunEnchants.QUICKDRAW_COOLDOWN * quick);
-                float speed = 3.0F * (1F + GunEnchants.QUICKDRAW_SPEED * quick);
+                float cdBase = GUN_COOLDOWN[tier] * VerdureGear.cooldownFactor(player, DamageClass.RANGED) * (1F - GunEnchants.QUICKDRAW_COOLDOWN * quick);
+                float speed = GUN_SPEED[tier] * (1F + GunEnchants.QUICKDRAW_SPEED * quick);
                 float damage = SEED_PELLET_DAMAGE[tier];
                 int life = 40;
                 if (bloom) {
@@ -167,22 +169,60 @@ public final class VerdureWeapons {
                     life = 64;
                     cdBase *= 1.5F;
                 }
-                Seedshot shot = new Seedshot(level, player, VerdureItems.SHOTS.get(PIERCER[tier]).get(), DamageClass.MAGIC, damage, tier, life, 0.01).weapon(stack);
+                Seedshot shot = new Seedshot(level, player, VerdureItems.SHOTS.get(PIERCER[tier]).get(), DamageClass.RANGED, damage, tier, life, GUN_GRAVITY[tier]).weapon(stack);
                 if (bloom) shot.mode(Seedshot.BLOOM);
                 if (mend) shot.mode(Seedshot.MEND);
                 if (!ammo.isEmpty() && ammo.is(VerdureItems.BURR_PELLET.get())) shot.clinging();
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayersTrackingEntity(player, new GunTrigger.Shot(player.getId()));
-                fire(player, stack, shot, speed, bloom ? SoundEvents.FIRECHARGE_USE : SoundEvents.CROSSBOW_SHOOT, bloom ? 1.2F : 1.5F, Math.max(2, Math.round(cdBase)));
+                gunFire(player, stack, shot, speed, GUN_SPREAD[tier], bloom, Math.max(2, Math.round(cdBase)));
                 boolean saved = GunEnchants.has(stack, GunEnchants.SEED_HOPPER) && player.getRandom().nextFloat() < GunEnchants.HOPPER_SAVE;
                 if (!infinite && !saved) ammo.shrink(1);
                 stack.hurtAndBreak(1, player, hand);
             }
             return InteractionResult.SUCCESS;
         }
+
+        /**
+         * 1.20: the shot leaves along the view (no inherited motion, which bent every shot fired on the move), with the
+         * strain's spread, sound layers and muzzle puff.
+         */
+        private void gunFire(Player player, ItemStack stack, Seedshot shot, float speed, float spread, boolean bloom, int cooldown) {
+            Level level = player.level();
+            net.minecraft.world.phys.Vec3 look = player.getLookAngle();
+            shot.shoot(look.x, look.y, look.z, speed, spread);
+            level.addFreshEntity(shot);
+            float jitter = 0.94F + player.getRandom().nextFloat() * 0.12F;
+            double x = player.getX(), y = player.getY(), z = player.getZ();
+            if (bloom) {
+                level.playSound(null, x, y, z, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.7F, 1.2F * jitter);
+                level.playSound(null, x, y, z, SoundEvents.SPORE_BLOSSOM_BREAK, SoundSource.PLAYERS, 0.8F, 0.8F * jitter);
+            } else if (tier == 1) {
+                level.playSound(null, x, y, z, SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 0.7F, 1.8F * jitter);
+                level.playSound(null, x, y, z, SoundEvents.BIG_DRIPLEAF_TILT_DOWN, SoundSource.PLAYERS, 0.6F, 1.6F * jitter);
+            } else if (tier == 2) {
+                level.playSound(null, x, y, z, SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 0.45F, 1.5F * jitter);
+                level.playSound(null, x, y, z, SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 0.6F, 1.3F * jitter);
+            } else {
+                level.playSound(null, x, y, z, SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 0.6F, 2.0F * jitter);
+                level.playSound(null, x, y, z, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.PLAYERS, 0.7F, 1.6F * jitter);
+            }
+            if (level instanceof net.minecraft.server.level.ServerLevel sl) {
+                double mx = player.getX() + look.x * 0.8, my = player.getEyeY() - 0.1 + look.y * 0.8, mz = player.getZ() + look.z * 0.8;
+                if (tier == 2) {
+                    sl.sendParticles(ParticleTypes.SMALL_FLAME, mx, my, mz, 4, 0.05, 0.05, 0.05, 0.02);
+                    sl.sendParticles(ParticleTypes.SMOKE, mx, my, mz, 3, 0.05, 0.05, 0.05, 0.01);
+                } else if (tier == 3) {
+                    sl.sendParticles(ParticleTypes.SNOWFLAKE, mx, my, mz, 4, 0.05, 0.05, 0.05, 0.02);
+                } else {
+                    sl.sendParticles(ParticleTypes.COMPOSTER, mx, my, mz, 3, 0.05, 0.05, 0.05, 0.0);
+                }
+            }
+            player.getCooldowns().addCooldown(stack, cooldown);
+        }
     }
 
     /**
-     * A Whip (summon and ranged since 1.16, never both at once), 1.6: a Fundamentum cord whip, swung with attack. Every lash deals summon damage, leaves Moon's
+     * A Whip (summon and melee, never both at once), 1.6: a Fundamentum cord whip, swung with attack. Every lash deals summon damage, leaves Moon's
      * Spite (its next class wound cuts deeper) and the tier's strain, outlines the target in the whip's colour, and turns
      * every pet of yours nearby on it, as Terraria's whips direct minions. The tiers lash differently: the Moonwisp a
      * single cord that leans toward the hostile nearest the crosshair; the Moonflare two strands, each for its own
@@ -193,8 +233,6 @@ public final class VerdureWeapons {
     public static class Whip extends Item {
         static final int[] COLOR = {0, 0x60C6EA, 0xFF8A3A, 0xBFEFFF};
         static final String[] IDS = {null, "moonwisp_whip", "moonflare_whip", "moonrime_whip"};
-        /** Cord length per tier, about {@code LASH_RANGE}. */
-        static final double[] LENGTH = {0, 5.5, 6.0, 6.5};
         /** Glow on a lashed target, in ticks. */
         static final int GLOW_TICKS = 100;
 
@@ -210,7 +248,7 @@ public final class VerdureWeapons {
         public static WhipDefinition definition(int tier) {
             int argb = 0xFF000000 | COLOR[tier];
             WhipDefinition.Builder b = WhipDefinition.builder(FloraFerox.id(IDS[tier]))
-                    .tuning(t -> t.length(LENGTH[tier]).damage(LASH_DAMAGE[tier]).cooldownTicks(LASH_COOLDOWN))
+                    .tuning(t -> t.length(LASH_RANGE[tier]).damage(LASH_DAMAGE[tier]).cooldownTicks(LASH_COOLDOWN))
                     .texture(FloraFerox.id("textures/entity/whip/" + IDS[tier] + ".png"))
                     .coiled()
                     .shockwave(0xC0000000 | COLOR[tier])

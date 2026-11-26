@@ -24,6 +24,15 @@ public final class VerdureEntities {
             b -> b.sized(0.8F, 1.6F).eyeHeight(1.3F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<MoonTick>> MOON_TICK = ENTITIES.registerEntityType("moon_tick", MoonTick::new, MobCategory.MONSTER,
             b -> b.sized(1.5F, 1.3F).eyeHeight(0.8F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<CaveGrazer>> BLOOMSPROUT = grazer("bloomsprout", CaveGrazer.Bloomsprout::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<CaveGrazer>> GLOWGILL = grazer("glowgill", CaveGrazer.Glowgill::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<CaveGrazer>> DRIPLEAF_TOAD = grazer("dripleaf_toad", CaveGrazer.DripleafToad::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<CaveGrazer>> COIL_SNAIL = grazer("coil_snail", CaveGrazer.CoilSnail::new);
+
+    private static DeferredHolder<EntityType<?>, EntityType<CaveGrazer>> grazer(String id, EntityType.EntityFactory<CaveGrazer> factory) {
+        return ENTITIES.registerEntityType(id, factory, MobCategory.CREATURE,
+                b -> b.sized(1.05F, 1.1F).eyeHeight(0.8F).clientTrackingRange(10));
+    }
     // ---- 1.2's six: one class (FeroxMob, the Lantern Leech a FeroxFlier), each with its profile (VerdureRules.Ferox)
     public static final DeferredHolder<EntityType<?>, EntityType<FeroxMob>> SNAP_DRAKE = ground(Ferox.SNAP_DRAKE, 1.0F, 1.4F, 1.1F);
     public static final DeferredHolder<EntityType<?>, EntityType<FeroxMob>> REED_WRETCH = ground(Ferox.REED_WRETCH, 0.8F, 2.1F, 1.8F);
@@ -55,7 +64,9 @@ public final class VerdureEntities {
 
     static {
         for (Wild w : Wild.values()) {
-            EntityType.EntityFactory<WildMob> make = w == Wild.RIFT_NARWHAL ? (t, l) -> new RiftNarwhal(t, l)
+            EntityType.EntityFactory<WildMob> make = w == Wild.RIFT_NARWHAL ? (t, l) -> new RiftNarwhal(t, l) : w == Wild.CRIMSON_BEHEMOTH ? (t, l) -> new CrimsonBehemoth(t, l)
+                    : w == Wild.THORN_MATRIARCH ? (t, l) -> new ThornMatriarch(t, l) : w == Wild.BRIAR_KING ? (t, l) -> new BriarKing(t, l)
+                    : w == Wild.CARRION_BLOOM ? (t, l) -> new CarrionBloom(t, l)
                     : w.move == Move.FLY ? (t, l) -> new WildFlier(t, l, w) : (t, l) -> new WildMob(t, l, w);
             WILD.put(w, ENTITIES.registerEntityType(w.id, make, MobCategory.MONSTER, b -> {
                 b.sized(w.width, w.height).eyeHeight(w.height * 0.8F).clientTrackingRange(w.is(VerdureRules.BOSS) ? 12 : 10);
@@ -70,4 +81,12 @@ public final class VerdureEntities {
     /** Every 1.1 weapon's shot (Seedshot). */
     public static final DeferredHolder<EntityType<?>, EntityType<Seedshot>> SHOT = ENTITIES.registerEntityType("seedshot", Seedshot::new, MobCategory.MISC,
             b -> b.sized(0.35F, 0.35F).clientTrackingRange(6).updateInterval(10));
+
+    /** 1.20's thrown plants (VerdureThrown); the Leafrang flies as Fundamentum's own thrown_weapon. */
+    public static final DeferredHolder<EntityType<?>, EntityType<VerdureThrown.RunedSeed>> RUNED_SEED = ENTITIES.registerEntityType("runed_seed",
+            VerdureThrown.RunedSeed::new, MobCategory.MISC, b -> b.sized(0.4F, 0.4F).clientTrackingRange(6).updateInterval(1).noSummon());
+    public static final DeferredHolder<EntityType<?>, EntityType<VerdureThrown.SporeFlask>> SPORE_FLASK = ENTITIES.registerEntityType("spore_flask",
+            VerdureThrown.SporeFlask::new, MobCategory.MISC, b -> b.sized(0.4F, 0.4F).clientTrackingRange(6).updateInterval(1).noSummon());
+    public static final DeferredHolder<EntityType<?>, EntityType<VerdureThrown.ThornJavelin>> THORN_JAVELIN = ENTITIES.registerEntityType("thorn_javelin",
+            VerdureThrown.ThornJavelin::new, MobCategory.MISC, b -> b.sized(0.4F, 0.4F).clientTrackingRange(6).updateInterval(1).noSummon());
 }

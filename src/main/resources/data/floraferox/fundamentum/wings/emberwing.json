@@ -4,5 +4,26 @@
   "rise_speed": 0.42,
   "rise_acceleration": 0.11,
   "horizontal_speed": 1.15,
-  "glide_fall_speed": 0.12
+  "glide_fall_speed": 0.12,
+  "fx": {
+    "burst": [
+      "minecraft:flame",
+      "minecraft:smoke"
+    ],
+    "burst_count": 12,
+    "flap": [
+      "minecraft:small_flame",
+      "minecraft:smoke"
+    ],
+    "flap_count": 2,
+    "trail": [
+      "minecraft:small_flame"
+    ],
+    "trail_rate": 0.5,
+    "flap_sound": "minecraft:entity.ender_dragon.flap",
+    "takeoff_sound": "minecraft:item.firecharge.use",
+    "volume": 0.35,
+    "pitch": 1.5,
+    "flap_speed": 1.0
+  }
 }

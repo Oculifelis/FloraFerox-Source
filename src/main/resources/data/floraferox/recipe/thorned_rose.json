@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:rose_bush",
+    "minecraft:gold_ingot",
+    "minecraft:sweet_berries",
+    "floraferox:mirecap_token"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:thorned_rose"
+  }
+}

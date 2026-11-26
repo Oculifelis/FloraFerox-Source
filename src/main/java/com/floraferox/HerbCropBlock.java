@@ -57,6 +57,21 @@ public class HerbCropBlock extends CropBlock {
         if (random.nextInt(herb.tier + 1) == 0) super.randomTick(state, level, pos, random);
     }
 
+    /**
+     * A cave grazer's pollen (docs/DESIGN.md, section 16): this many extra growth chances, each one as a plain crop's
+     * random tick (light and farmland as usual) but without the later strains' skip. Whether it grew.
+     */
+    public boolean dust(ServerLevel level, BlockPos pos, RandomSource random, int chances) {
+        int was = getAge(level.getBlockState(pos));
+        for (int i = 0; i < chances; i++) {
+            BlockState now = level.getBlockState(pos);
+            if (!now.is(this) || isMaxAge(now)) break;
+            super.randomTick(now, level, pos, random);
+        }
+        BlockState after = level.getBlockState(pos);
+        return after.is(this) && getAge(after) > was;
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE);

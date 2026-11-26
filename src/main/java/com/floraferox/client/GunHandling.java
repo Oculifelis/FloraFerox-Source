@@ -63,10 +63,14 @@ public final class GunHandling {
     static final float[] KICK = {0F, 1.4F, 2.0F, 1.1F};
 
     private static boolean down;
-    private static ItemStack pulled = ItemStack.EMPTY;
+    /**
+     * The gun the trigger was pulled on, by item and hotbar slot. 1.20: never by stack identity, since every shot's
+     * durability change makes the server send a new stack, which used to read as a swap and re-press the trigger.
+     */
+    private static @Nullable Item pulledItem;
+    private static int pulledSlot = -1;
     private static float lastCooldown;
     private static float kick;
-    private static long kickTime = -100L;
     /** The client's own clock (ticks), when the last shot's kick and the last draw started, and what was drawn. */
     private static long clock;
     private static float shotAt = -1000F, drawAt = -1000F;
@@ -110,7 +114,7 @@ public final class GunHandling {
             }
         }
         boolean want = mc.screen == null && p != null && p.isAlive() && !p.isSpectator() && holdingTrigger(p) && mc.options.keyAttack.isDown();
-        if (want && down && p.getMainHandItem() != pulled) send(false);    // swapped guns while firing: let go first
+        if (want && down && (p.getMainHandItem().getItem() != pulledItem || p.getInventory().getSelectedSlot() != pulledSlot)) send(false);    // swapped guns while firing: let go first
         if (want != down) send(want);
         // a shot starts the gun's cooldown: that is when the camera kicks
         if (holdingGun(p) && mc.level != null) {
@@ -119,7 +123,6 @@ public final class GunHandling {
             if (cd > lastCooldown + 0.3F) {
                 int tier = ((VerdureWeapons.BloomGun) gun.getItem()).tier();
                 kick = KICK[tier] * (GunEnchants.has(gun, GunEnchants.BLOOM_SHOT) ? 1.4F : 1F);
-                kickTime = mc.level.getGameTime();
                 shotAt = clock;
             }
             lastCooldown = cd;
@@ -131,7 +134,8 @@ public final class GunHandling {
     private static void send(boolean value) {
         Minecraft mc = Minecraft.getInstance();
         down = value;
-        pulled = value && mc.player != null ? mc.player.getMainHandItem() : ItemStack.EMPTY;
+        pulledItem = value && mc.player != null ? mc.player.getMainHandItem().getItem() : null;
+        pulledSlot = value && mc.player != null ? mc.player.getInventory().getSelectedSlot() : -1;
         if (mc.getConnection() != null) ClientPacketDistributor.sendToServer(new GunTrigger.Payload(value));
     }
 
@@ -144,12 +148,15 @@ public final class GunHandling {
         }
     }
 
-    /** Recoil: the camera kicks up and settles back over about half a second. */
+    /**
+     * Recoil: the camera kicks up and settles back over about half a second. 1.20: timed on the client's own clock, not
+     * the level's game time, which the server's time sync can step back or forward mid-kick (a jolt or a lost kick).
+     */
     @SubscribeEvent
     public static void camera(ViewportEvent.ComputeCameraAngles e) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
-        float t = (float) (mc.level.getGameTime() - kickTime) + (float) e.getPartialTick();
+        if (mc.level == null || !holdingGun(mc.player)) return;
+        float t = sinceShot((float) e.getPartialTick());
         if (t >= 0F && t <= 12F) e.setPitch(e.getPitch() - kick * (float) Math.exp(-t * 0.35F) * Math.min(1F, t * 2F + 0.3F));
     }
 

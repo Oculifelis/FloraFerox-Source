@@ -45,6 +45,10 @@ public final class VerdureModEvents {
         e.put(VerdureEntities.MIRE_GHAST.get(), MireGhast.createAttributes().build());
         e.put(VerdureEntities.DUSK_SPRIG.get(), DuskSprig.createAttributes().build());
         e.put(VerdureEntities.MOON_TICK.get(), MoonTick.createAttributes().build());
+        e.put(VerdureEntities.BLOOMSPROUT.get(), CaveGrazer.createAttributes().build());
+        e.put(VerdureEntities.GLOWGILL.get(), CaveGrazer.createAttributes().build());
+        e.put(VerdureEntities.DRIPLEAF_TOAD.get(), CaveGrazer.createAttributes().build());
+        e.put(VerdureEntities.COIL_SNAIL.get(), CaveGrazer.createAttributes().build());
         for (Ferox f : Ferox.values()) e.put(VerdureEntities.ferox(f), FeroxMob.createAttributes(f).build());
         for (Wild w : Wild.values()) e.put(VerdureEntities.wild(w), WildMob.createAttributes(w).build());
     }
@@ -57,6 +61,10 @@ public final class VerdureModEvents {
         e.register(VerdureEntities.MIRE_GHAST.get(), SpawnPlacementTypes.ON_GROUND, h, MireGhast::checkSpawn, op);
         e.register(VerdureEntities.DUSK_SPRIG.get(), SpawnPlacementTypes.ON_GROUND, h, DuskSprig::checkSpawn, op);
         e.register(VerdureEntities.MOON_TICK.get(), SpawnPlacementTypes.ON_GROUND, h, MoonTick::checkSpawn, op);
+        e.register(VerdureEntities.BLOOMSPROUT.get(), SpawnPlacementTypes.ON_GROUND, h, CaveGrazer::checkSpawn, op);
+        e.register(VerdureEntities.GLOWGILL.get(), SpawnPlacementTypes.ON_GROUND, h, CaveGrazer::checkSpawn, op);
+        e.register(VerdureEntities.DRIPLEAF_TOAD.get(), SpawnPlacementTypes.ON_GROUND, h, CaveGrazer::checkSpawn, op);
+        e.register(VerdureEntities.COIL_SNAIL.get(), SpawnPlacementTypes.ON_GROUND, h, CaveGrazer::checkSpawn, op);
         for (Ferox f : Ferox.values()) ferox(e, VerdureEntities.ferox(f), f);
         for (Wild w : Wild.values()) wild(e, VerdureEntities.wild(w), w);
     }
@@ -79,6 +87,10 @@ public final class VerdureModEvents {
             e.accept(VerdureItems.MIRE_GHAST_EGG.get());
             e.accept(VerdureItems.DUSK_SPRIG_EGG.get());
             e.accept(VerdureItems.MOON_TICK_EGG.get());
+            e.accept(VerdureItems.BLOOMSPROUT_EGG.get());
+            e.accept(VerdureItems.GLOWGILL_EGG.get());
+            e.accept(VerdureItems.DRIPLEAF_TOAD_EGG.get());
+            e.accept(VerdureItems.COIL_SNAIL_EGG.get());
             for (Ferox f : Ferox.values()) e.accept(VerdureItems.FEROX_EGGS.get(f).get());
             for (Wild w : Wild.values()) e.accept(VerdureItems.WILD_EGGS.get(w).get());
         }

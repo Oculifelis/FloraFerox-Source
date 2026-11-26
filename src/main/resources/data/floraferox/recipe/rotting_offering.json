@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:nether_wart_block",
+    "minecraft:crimson_fungus",
+    "minecraft:spore_blossom",
+    "minecraft:ghast_tear"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:rotting_offering"
+  }
+}

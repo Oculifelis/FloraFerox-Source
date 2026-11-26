@@ -1,0 +1,87 @@
+[
+  {
+    "id": "floraferox:thorn_matriarch",
+    "drops": [
+      "floraferox:matriarch_crest",
+      "floraferox:royal_thorns",
+      "minecraft:sweet_berries",
+      "minecraft:rose_bush",
+      "floraferox:pulseroot_token",
+      "floraferox:pulseroot_seeds",
+      "floraferox:ember_graft#50%",
+      "floraferox:rime_graft#35%"
+    ],
+    "scale": 14,
+    "y_offset": 0,
+    "broken_model": false,
+    "additional_info": true,
+    "position": 20,
+    "health": 300,
+    "armor": 6,
+    "type": 1
+  },
+  {
+    "id": "floraferox:briar_king",
+    "drops": [
+      "floraferox:kings_rosehip",
+      "floraferox:briar_heartwood",
+      "minecraft:rose_bush",
+      "minecraft:dark_oak_log",
+      "floraferox:mirecap_token",
+      "floraferox:mirecap_seeds",
+      "floraferox:ember_graft#50%",
+      "floraferox:rime_graft#35%"
+    ],
+    "scale": 16,
+    "y_offset": 0,
+    "broken_model": false,
+    "additional_info": true,
+    "position": 25,
+    "health": 380,
+    "armor": 8,
+    "type": 1
+  },
+  {
+    "id": "floraferox:carrion_bloom",
+    "drops": [
+      "floraferox:carrion_heart",
+      "floraferox:carrion_petal",
+      "minecraft:spore_blossom",
+      "minecraft:glow_berries",
+      "minecraft:moss_block",
+      "floraferox:mirecap_token",
+      "floraferox:mirecap_seeds",
+      "floraferox:ember_graft#50%",
+      "floraferox:rime_graft#35%"
+    ],
+    "scale": 24,
+    "y_offset": 0,
+    "broken_model": false,
+    "additional_info": true,
+    "position": 30,
+    "health": 340,
+    "armor": 6,
+    "type": 1
+  },
+  {
+    "id": "floraferox:crimson_behemoth",
+    "drops": [
+      "floraferox:behemoth_heart",
+      "floraferox:behemoth_hide",
+      "minecraft:nether_wart_block",
+      "minecraft:shroomlight",
+      "floraferox:mirecap_token",
+      "floraferox:mirecap_seeds",
+      "floraferox:ember_graft#50%",
+      "floraferox:rime_graft#35%"
+    ],
+    "scale": 10,
+    "y_offset": 0,
+    "broken_model": false,
+    "additional_info": true,
+    "position": 40,
+    "health": 420,
+    "armor": 10,
+    "type": 1
+  }
+]

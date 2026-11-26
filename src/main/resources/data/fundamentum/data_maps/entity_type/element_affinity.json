@@ -1,0 +1,234 @@
+{
+  "values": {
+    "floraferox:pulse_gnat": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25,
+        "#fundamentum:element/air": -0.5
+      }
+    },
+    "floraferox:mire_ghast": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.5
+      }
+    },
+    "floraferox:dusk_sprig": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:moon_tick": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:snap_drake": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:reed_wretch": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:lantern_leech": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:burr_crawler": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:orchid_mantis": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:dew_crab": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.5
+      }
+    },
+    "floraferox:thorn_hopper": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:pollen_puff": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25,
+        "#fundamentum:element/air": -0.5
+      }
+    },
+    "floraferox:graft_twin": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:root_grub": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:pitcher_spitter": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:bell_stalker": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25,
+        "#fundamentum:element/shadow": 0.5
+      }
+    },
+    "floraferox:thorn_matriarch": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:briar_king": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:carrion_bloom": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:bloomsprout": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:glowgill": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.5
+      }
+    },
+    "floraferox:dripleaf_toad": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.5
+      }
+    },
+    "floraferox:coil_snail": {
+      "resist": {
+        "#fundamentum:element/fire": -0.5,
+        "#fundamentum:element/water": 0.25
+      }
+    },
+    "floraferox:soulwick": {
+      "resist": {
+        "#fundamentum:element/fire": 1.0,
+        "#fundamentum:element/water": -0.5
+      }
+    },
+    "floraferox:cinder_thistle": {
+      "resist": {
+        "#fundamentum:element/fire": 1.0,
+        "#fundamentum:element/water": -0.5
+      }
+    },
+    "floraferox:lanternpuff": {
+      "resist": {
+        "#fundamentum:element/fire": 1.0,
+        "#fundamentum:element/water": -0.5
+      }
+    },
+    "floraferox:crimson_behemoth": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:wartback": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:nylium_lurker": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:warped_wartback": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:warped_stilt": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      },
+      "immune": [
+        "#floraferox:element/spore"
+      ]
+    },
+    "floraferox:blightcap": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/poison": 0.5,
+        "#fundamentum:element/ice": -0.5
+      },
+      "immune": [
+        "#floraferox:element/spore"
+      ]
+    },
+    "floraferox:snarlstump": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:glisterlure": {
+      "resist": {
+        "#fundamentum:element/fire": 0.5,
+        "#fundamentum:element/ice": -0.5
+      }
+    },
+    "floraferox:pearl_pod": {
+      "resist": {
+        "#fundamentum:element/arcane": 0.5,
+        "#fundamentum:element/water": -0.5
+      }
+    },
+    "floraferox:void_jelly": {
+      "resist": {
+        "#fundamentum:element/poison": 0.5
+      }
+    }
+  }
+}

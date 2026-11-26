@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "floraferox:item/glowgill_spawn_egg"
+  }
+}

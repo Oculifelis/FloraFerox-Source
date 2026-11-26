@@ -186,9 +186,9 @@ final class VerdureGearTests {
         h.assertTrue(blade.getItem().use(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "the Mirecap Cleaver slashes");
         ItemStack gun = new ItemStack(VerdureItems.WEAPONS.get(Herb.PULSEROOT).get());
         fp.setItemInHand(InteractionHand.MAIN_HAND, gun);
-        h.assertTrue(gun.getItem().use(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "the Pulse Pistol won't fire without Seed Pellets");
+        h.assertTrue(((VerdureWeapons.BloomGun) gun.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "the Pulse Pistol won't fire without Seed Pellets");
         fp.getInventory().add(new ItemStack(VerdureItems.SEED_PELLET.get(), 3));
-        h.assertTrue(gun.getItem().use(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "with Seed Pellets it fires");
+        h.assertTrue(((VerdureWeapons.BloomGun) gun.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "with Seed Pellets it fires");
         h.assertTrue(VerdureWeapons.BloomGun.ammo(fp).getCount() == 2, "and spends one");
         ItemStack staff = new ItemStack(VerdureItems.WEAPONS.get(Herb.DUSKPETAL).get());
         fp.setItemInHand(InteractionHand.MAIN_HAND, staff);
@@ -352,8 +352,8 @@ final class VerdureGearTests {
                 h.assertTrue(def.tuning.strands() == t && def.homingDegrees > 0 && (t == 1) != def.strandTargets && def.idleCoil
                         && def.cordFx == (t == 2 ? com.fundamentum.whip.WhipCordFx.ENERGY : com.fundamentum.whip.WhipCordFx.GLOW),
                         "tier " + t + ": " + t + " strand(s), homing, coiled, its cord shader");
-                h.assertTrue(def.tuning.damage() == VerdureRules.LASH_DAMAGE[t] && Math.abs(def.tuning.length() - VerdureRules.LASH_RANGE) <= 0.5,
-                        "tier " + t + ": the lash's damage and about its range");
+                h.assertTrue(def.tuning.damage() == VerdureRules.LASH_DAMAGE[t] && def.tuning.length() == VerdureRules.LASH_RANGE[t],
+                        "tier " + t + ": the lash's damage and its range");
                 h.assertTrue(whip[0].is(net.minecraft.tags.ItemTags.create(net.minecraft.resources.Identifier.fromNamespaceAndPath("fundamentum", "whips"))),
                         "tier " + t + " is in #fundamentum:whips");
                 double[] offs = t == 1 ? new double[] {0} : t == 2 ? new double[] {-30, 30} : new double[] {-40, 0, 40};

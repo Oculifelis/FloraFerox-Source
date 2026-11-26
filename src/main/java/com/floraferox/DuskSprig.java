@@ -37,6 +37,14 @@ import net.minecraft.world.phys.Vec3;
  * Weak to magic.
  */
 public class DuskSprig extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(DuskSprig.class, EntityDataSerializers.INT);
     public final DuskSprigBrain brain = new DuskSprigBrain();
     /** For tests: how many bites landed, and whether daylight is forced (null: the sky decides). */

@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "regions_unexplored"
+    }
+  ],
+  "type": "neoforge:add_spawns",
+  "biomes": "regions_unexplored:infernal_holt",
+  "spawners": {
+    "type": "floraferox:snarlstump",
+    "weight": 10,
+    "minCount": 1,
+    "maxCount": 2
+  }
+}

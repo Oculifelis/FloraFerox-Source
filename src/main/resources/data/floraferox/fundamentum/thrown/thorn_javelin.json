@@ -1,0 +1,11 @@
+{
+  "item": "floraferox:thorn_javelin",
+  "throw_speed": 2.0,
+  "gravity": 0.04,
+  "damage": 7,
+  "pierce": 0,
+  "sticks_in_target": true,
+  "breaks_on_hit": false,
+  "consumable": false,
+  "spin": "none"
+}

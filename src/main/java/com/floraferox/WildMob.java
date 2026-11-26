@@ -7,8 +7,6 @@ import com.floraferox.VerdureRules.Move;
 import com.floraferox.VerdureRules.Style;
 import com.floraferox.VerdureRules.Wild;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -26,7 +24,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +40,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +57,14 @@ import net.minecraft.world.phys.Vec3;
  * explicit machine (Act), saved and synced.
  */
 public class WildMob extends Monster {
+    /** Its blows are of its element (VerdureElements). */
+    private VerdureElements.Sources sources;
+
+    @Override
+    public net.minecraft.world.damagesource.DamageSources damageSources() {
+        return sources == null ? sources = new VerdureElements.Sources(this) : sources;
+    }
+
     private static final EntityDataAccessor<Integer> ANIM = SynchedEntityData.defineId(WildMob.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ACT = SynchedEntityData.defineId(WildMob.class, EntityDataSerializers.INT);
 
@@ -71,7 +75,7 @@ public class WildMob extends Monster {
      * <pre>
      * NONE -(hopper's blow lands / narwhal recovers / puff bursts)-> FLEE -(time up)-> NONE
      * NONE -(far prey, Root Grub)-> BURROW -(under its prey, prey gone, or too long: it erupts)-> NONE
-     * NONE -(far prey in sight, Briar King, Crimson Behemoth)-> CHARGE -(time up, or a wall)-> NONE
+     * NONE -(far prey in sight, Briar King)-> CHARGE -(time up, or a wall)-> NONE
      * NONE -(its leap, Thorn Matriarch)-> LEAP -(off the ground)-> AIRBORNE -(lands: the slam)-> NONE
      * </pre>
      *
@@ -116,14 +120,13 @@ public class WildMob extends Monster {
     private Act act = Act.NONE;
     /** FLEE and CHARGE: ticks left; BURROW: ticks under the ground; LEAP and AIRBORNE: unused. */
     private int actTicks;
-    /** A charge's heading, and what it has already run down (not saved: a reloaded charge may run them down again). */
+    /** A charge's heading (the Briar King's, which BriarKing drives). */
     private Vec3 chargeDir = Vec3.ZERO;
-    private final Set<Integer> trampled = new HashSet<>();
     /** Volleys or stings so far (the Graft Twin's twin volley, the Void Jelly's lift). */
     private int volley;
-    /** Ticks till each move may come again: the grub's burrow, the charge, the Behemoth's volley, the bloom's drag and spores. */
-    private int burrowCooldown, chargeCooldown, volleyCooldown, pullCooldown, sporeCooldown;
-    /** The Thorn Matriarch: how much of its brood it has called (-1 until it has looked). */
+    /** Ticks till each move may come again: the grub's burrow, the charge, the bloom's drag and spores. */
+    private int burrowCooldown, chargeCooldown, pullCooldown, sporeCooldown;
+    /** How much of its brood a boss has called (-1 until it has looked; kept for old saves). */
     private int brood = -1;
     /** The Soulwick has flared (once, so saved). */
     private boolean flared;
@@ -144,7 +147,7 @@ public class WildMob extends Monster {
     public static AttributeSupplier.Builder createAttributes(Wild w) {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, w.health).add(Attributes.ATTACK_DAMAGE, w.attack)
                 .add(Attributes.ARMOR, w.armor).add(Attributes.MOVEMENT_SPEED, w.speed).add(Attributes.FLYING_SPEED, Math.max(0.3, w.speed * 2))
-                .add(Attributes.KNOCKBACK_RESISTANCE, w.move == Move.STILL ? 1.0 : w.is(BOSS) ? BOSS_KNOCKBACK_RESISTANCE : KNOCKBACK_RESISTANCE)
+                .add(Attributes.KNOCKBACK_RESISTANCE, w.move == Move.STILL || w == Wild.BRIAR_KING ? 1.0 : w.is(BOSS) ? BOSS_KNOCKBACK_RESISTANCE : KNOCKBACK_RESISTANCE)
                 .add(Attributes.FOLLOW_RANGE, w.style == Style.SHOT ? 24.0 : 32.0);
     }
 
@@ -167,6 +170,16 @@ public class WildMob extends Monster {
         if (was == Act.BURROW || next == Act.BURROW) setInvisible(next == Act.BURROW);
     }
 
+    /** A boss's charge (BriarKing): its heading and ticks, or none (a null heading). Saved with the rest. */
+    protected void charging(Vec3 dir, int ticks) {
+        chargeDir = dir == null ? Vec3.ZERO : dir;
+        go(dir == null ? Act.NONE : Act.CHARGE, dir == null ? 0 : ticks);
+    }
+
+    /** The charge's heading, and its ticks left. */
+    protected Vec3 chargeDir() { return chargeDir; }
+    protected int actTicks() { return actTicks; }
+
     /** It keeps away from its prey for a while (only when it is at nothing else). */
     private void flee(int ticks) {
         if (act == Act.NONE || act == Act.FLEE) go(Act.FLEE, ticks);
@@ -186,7 +199,6 @@ public class WildMob extends Monster {
         }
         out.putInt("BurrowCooldown", burrowCooldown);
         out.putInt("ChargeCooldown", chargeCooldown);
-        out.putInt("VolleyCooldown", volleyCooldown);
         out.putInt("PullCooldown", pullCooldown);
         out.putInt("SporeCooldown", sporeCooldown);
         out.putInt("Volley", volley);
@@ -205,7 +217,6 @@ public class WildMob extends Monster {
         go(a, a == Act.NONE ? 0 : in.getIntOr("ActTicks", 0));
         burrowCooldown = in.getIntOr("BurrowCooldown", 0);
         chargeCooldown = in.getIntOr("ChargeCooldown", 0);
-        volleyCooldown = in.getIntOr("VolleyCooldown", 0);
         pullCooldown = in.getIntOr("PullCooldown", 0);
         sporeCooldown = in.getIntOr("SporeCooldown", 0);
         volley = in.getIntOr("Volley", 0);
@@ -223,7 +234,9 @@ public class WildMob extends Monster {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(2, new ChaseGoal());
         goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 1.0));   // back to its den, if it has one
-        if (profile.move != Move.STILL && !profile.is(AMBUSH)) goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        if (profile.move != Move.STILL && !profile.is(AMBUSH) && !profile.fliesFreely()) {
+            goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        }
         goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         if (profile.move != Move.STILL) goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -237,12 +250,22 @@ public class WildMob extends Monster {
     /** Whether it fights at all just now (a tamed narwhal never turns on anyone itself). */
     protected boolean hunts() { return true; }
 
+    /** A boss with a fight of its own (CrimsonBehemoth) runs it here instead of the tell and blow; whether it did. */
+    protected boolean fights(ServerLevel level) { return false; }
+
+    /** What the renderer plays: a brain state and its ticks (a boss with its own fight sets it itself). */
+    protected void anim(StrikeBrain.State state, int ticks) {
+        entityData.set(ANIM, state.ordinal() * 1000 + Math.min(999, ticks));
+    }
+
     @Override
     protected void customServerAiStep(ServerLevel level) {
         super.customServerAiStep(level);
+        if (fights(level)) return;
         LivingEntity t = getTarget();
         boolean hunting = hunts() && t != null && t.isAlive();
-        boolean prey = hunting && (profile.style != Style.SHOT || hasLineOfSight(t));
+        boolean needsSight = profile.style == Style.SHOT || profile.fliesFreely();
+        boolean prey = hunting && (!needsSight || hasLineOfSight(t));
         double d = hunting ? reach(t) : Double.MAX_VALUE;
         tactics(level, hunting ? t : null, d);
         if (act.busy) prey = false;                                           // busy with its own ways: no tell just now
@@ -266,7 +289,7 @@ public class WildMob extends Monster {
         }
         if (brain.rooted() && prey) getLookControl().setLookAt(t, 30F, 30F);
         if (profile.move == Move.STILL) setDeltaMovement(getDeltaMovement().multiply(0, 1, 0));
-        entityData.set(ANIM, brain.state().ordinal() * 1000 + Math.min(999, brain.ticksInState()));
+        anim(brain.state(), brain.ticksInState());
     }
 
     private void strike(ServerLevel level, LivingEntity t, double d) {
@@ -302,7 +325,6 @@ public class WildMob extends Monster {
                 double up = leap ? LEAP_UP : LUNGE_UP;
                 if (profile.move == Move.FLY) up = (t.getY() + t.getBbHeight() * 0.5 - getY() - getBbHeight() * 0.5) * 0.15;
                 if (to.lengthSqr() > 1.0E-4) addDeltaMovement(to.normalize().scale(leap ? LEAP_SPEED : LUNGE_SPEED).add(0, up, 0));
-                if (profile == Wild.THORN_MATRIARCH) go(Act.LEAP, 0);
             }
             case SHOT -> {
                 if (t == null) return;
@@ -346,7 +368,6 @@ public class WildMob extends Monster {
         if (act == Act.FLEE && --actTicks <= 0) go(Act.NONE, 0);
         if (burrowCooldown > 0) burrowCooldown--;
         if (chargeCooldown > 0) chargeCooldown--;
-        if (volleyCooldown > 0) volleyCooldown--;
         if (pullCooldown > 0) pullCooldown--;
         if (sporeCooldown > 0) sporeCooldown--;
         StrikeBrain.State st = brain.state();
@@ -359,29 +380,13 @@ public class WildMob extends Monster {
                 if (recovering) flee(NARWHAL_WHEEL_TICKS);                              // wheel round and charge again
             }
             case ROOT_GRUB -> burrow(level, t, d);
-            case THORN_MATRIARCH -> matriarch(level, t);
-            case BRIAR_KING -> charge(level, t, d);
-            case CRIMSON_BEHEMOTH -> {
-                charge(level, t, d);
-                if (t != null && act != Act.CHARGE && st == StrikeBrain.State.WALK && d > VOLLEY_FROM && volleyCooldown == 0 && hasLineOfSight(t)) {
-                    volleyCooldown = VOLLEY_COOLDOWN;                                   // three fireballs at far prey
-                    Vec3 aim = t.getEyePosition().subtract(getEyePosition()).normalize();
-                    for (int k = -1; k <= 1; k++) {
-                        Vec3 dir = aim.yRot(k * 0.15F);
-                        SmallFireball f = new SmallFireball(level, this, dir);
-                        f.setPos(getEyePosition().add(dir.scale(getBbWidth() * 0.6)));
-                        level.addFreshEntity(f);
-                    }
-                    playSound(SoundEvents.BLAZE_SHOOT, 1.0F, 0.7F);
-                }
-            }
-            case CARRION_BLOOM -> bloom(level);
+            // the four bosses fight their own way (CrimsonBehemoth, ThornMatriarch, BriarKing, CarrionBloom)
             case SOULWICK -> {
                 if (!flared && getHealth() < getMaxHealth() * FLARE_AT) {                 // it flares up once, near its end
                     flared = true;
                     level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, getX(), getY() + getBbHeight() * 0.5, getZ(), 40, 1.2, 0.6, 1.2, 0.05);
                     playSound(SoundEvents.FIRECHARGE_USE, 1.2F, 0.6F);
-                    area(level, FLARE_RADIUS, e -> e.igniteForSeconds(BURN_SECONDS * 2));
+                    area(level, FLARE_RADIUS, e -> VerdureElements.burn(this, e, BURN_SECONDS * 2));
                 }
             }
             case NYLIUM_LURKER -> {
@@ -412,108 +417,12 @@ public class WildMob extends Monster {
             playSound(SoundEvents.ROOTED_DIRT_BREAK, 1.2F, 0.6F);
             if (!under.isAir())
                 level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, under), getX(), getY() + 0.3, getZ(), 30, 0.6, 0.3, 0.6, 0.1);
-            if (t != null && d <= ERUPT_REACH + 0.8 && doHurtTarget(level, t)) {        // it bursts up under its prey
+            if (t != null && d <= ERUPT_REACH + 0.8 && blow(level, t, VerdureElements.Attack.ERUPT)) {        // it bursts up under its prey
                 strikes++;
                 t.push(0, ERUPT_UP, 0);
                 t.hurtMarked = true;
             }
         }
-    }
-
-    /** The Thorn Matriarch lands its leap in a shockwave, and calls its brood as it weakens. */
-    private void matriarch(ServerLevel level, LivingEntity t) {
-        if (act == Act.LEAP && !onGround()) go(Act.AIRBORNE, 0);
-        if (act == Act.AIRBORNE && onGround()) {
-            go(Act.NONE, 0);
-            level.sendParticles(ParticleTypes.EXPLOSION, getX(), getY() + 0.2, getZ(), 3, 1.0, 0.1, 1.0, 0.0);
-            playSound(SoundEvents.GENERIC_EXPLODE.value(), 0.8F, 1.4F);
-            area(level, SLAM_RADIUS, e -> {
-                e.knockback(SLAM_KNOCKBACK, getX() - e.getX(), getZ() - e.getZ());
-                e.hurtMarked = true;
-            });
-        }
-        int due = getHealth() < getMaxHealth() / 3 ? 2 : getHealth() < getMaxHealth() * 2 / 3 ? 1 : 0;
-        if (brood < 0) brood = due;                                                     // as it was when it was saved
-        while (brood < due) {
-            brood++;
-            for (int i = 0; i < BROOD; i++) {
-                WildMob h = VerdureEntities.wild(Wild.THORN_HOPPER).create(level, EntitySpawnReason.MOB_SUMMONED);
-                if (h == null) continue;
-                h.snapTo(getX() + (random.nextDouble() - 0.5) * 2, getY(), getZ() + (random.nextDouble() - 0.5) * 2, random.nextFloat() * 360F, 0F);
-                if (t != null) h.setTarget(t);
-                level.addFreshEntity(h);
-            }
-            playSound(SoundEvents.SWEET_BERRY_BUSH_BREAK, 1.5F, 0.6F);
-        }
-    }
-
-    /** The Briar King and Crimson Behemoth charge at far prey, running down whatever stands in their way. */
-    private void charge(ServerLevel level, LivingEntity t, double d) {
-        if (act != Act.CHARGE) {
-            if (act == Act.NONE && t != null && brain.state() == StrikeBrain.State.WALK && d > CHARGE_FROM && d < CHARGE_TO && chargeCooldown == 0
-                    && onGround() && hasLineOfSight(t)) {
-                Vec3 to = t.position().subtract(position()).multiply(1, 0, 1);
-                if (to.lengthSqr() < 1.0E-4) return;
-                chargeDir = to.normalize();
-                go(Act.CHARGE, CHARGE_TICKS);
-                chargeCooldown = CHARGE_COOLDOWN;
-                trampled.clear();
-                playSound(SoundEvents.RAVAGER_ROAR, 1.2F, 1.0F);
-            }
-            return;
-        }
-        actTicks--;
-        getNavigation().stop();
-        setYRot((float) (Mth.atan2(chargeDir.z, chargeDir.x) * Mth.RAD_TO_DEG) - 90F);
-        yBodyRot = getYRot();
-        setDeltaMovement(chargeDir.x * CHARGE_SPEED, getDeltaMovement().y, chargeDir.z * CHARGE_SPEED);
-        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.4),
-                e -> e != this && e.isAlive() && !(e instanceof Enemy) && !trampled.contains(e.getId()))) {
-            trampled.add(e.getId());
-            if (doHurtTarget(level, e)) {
-                strikes++;
-                mark(e);
-                e.knockback(CHARGE_KNOCKBACK, -chargeDir.x, -chargeDir.z);
-                e.hurtMarked = true;
-            }
-        }
-        if (horizontalCollision || actTicks <= 0) go(Act.NONE, 0);                       // time up, or it runs into a wall
-    }
-
-    /** The Carrion Bloom drags prey in on its vines and breathes poison spores round itself. */
-    private void bloom(ServerLevel level) {
-        if (pullCooldown == 0) {
-            pullCooldown = PULL_EVERY;
-            boolean any = false;
-            for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(PULL_RANGE),
-                    e -> e != this && e.isAlive() && e.distanceTo(this) <= PULL_RANGE && prey(e) && hasLineOfSight(e))) {
-                Vec3 in = position().subtract(e.position());
-                if (in.lengthSqr() < 1.0E-4) continue;
-                e.push(in.normalize().scale(PULL_SPEED).add(0, 0.2, 0));
-                e.hurtMarked = true;
-                any = true;
-            }
-            if (any) playSound(SoundEvents.CAVE_VINES_BREAK, 1.2F, 0.6F);
-        }
-        if (sporeCooldown == 0) {
-            sporeCooldown = SPORE_EVERY;
-            if (level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(SPORE_RANGE), e -> e != this && e.isAlive() && prey(e)).isEmpty()) return;
-            AreaEffectCloud c = new AreaEffectCloud(level, getX(), getY(), getZ());
-            c.setOwner(this);
-            c.setRadius(3.0F);
-            c.setRadiusPerTick(-0.01F);
-            c.setDuration(SPORE_TICKS);
-            c.setWaitTime(10);
-            c.addEffect(new MobEffectInstance(MobEffects.POISON, MARK_TICKS, 0));
-            level.addFreshEntity(c);
-            playSound(SoundEvents.SPORE_BLOSSOM_BREAK, 1.2F, 0.6F);
-        }
-    }
-
-    /** What the bloom, which never moves, would fight: its prey, or a player in reach it is not at truce with. */
-    private boolean prey(LivingEntity e) {
-        if (e == getTarget()) return true;
-        return e instanceof Player p && !p.isCreative() && !p.isSpectator() && !Truce.spares(this, p);
     }
 
     /** Whether its prey is looking at it just now (the Bell Stalker creeps only while it is not). */
@@ -536,10 +445,12 @@ public class WildMob extends Monster {
     private void shoot(ServerLevel level, LivingEntity t, float yaw) {
         String sprite;
         int tier;
+        VerdureElements.Attack attack = VerdureElements.Attack.MAIN;
         switch (profile.mark) {
             case TWIN -> {
                 sprite = frost ? "rime_mote" : "ember_mote";
                 tier = frost ? 3 : 2;
+                attack = frost ? VerdureElements.Attack.RIME : VerdureElements.Attack.EMBER;
                 frost = !frost;
             }
             case BURN -> {
@@ -551,8 +462,12 @@ public class WildMob extends Monster {
                 tier = 1;
             }
         }
+        if (VerdureElements.chills(this) && tier == 2) tier = 3;                        // a rime look's burning shot chills
+        else if (Looks.look(this).kind().equals("ember") && tier == 3) tier = 1;         // an ember look's frost shot doesn't
         Seedshot s = new Seedshot(level, this, VerdureItems.SHOTS.get(sprite).get(), DamageClass.RANGED, (float) profile.attack, tier, 40, 0.0);
         if (profile.mark == Mark.SLOW) s.clinging();
+        String element = VerdureElements.element(this, attack);
+        if (element != null) s.element(VerdureElements.type(element));
         Vec3 from = getEyePosition();
         Vec3 aim = t.getBoundingBox().getCenter().subtract(from).yRot(yaw * Mth.DEG_TO_RAD);
         s.setPos(from.add(aim.normalize().scale(getBbWidth() * 0.5 + 0.3)));
@@ -561,13 +476,31 @@ public class WildMob extends Monster {
         shots++;
     }
 
+    /** One blow of another of its attacks (the grub's erupt), of that attack's element. */
+    private boolean blow(ServerLevel level, LivingEntity t, VerdureElements.Attack attack) {
+        boolean[] hit = new boolean[1];
+        as(attack, () -> hit[0] = doHurtTarget(level, t));
+        return hit[0];
+    }
+
+    /** Blows made as another of its attacks (the matriarch's slam), then back to its main one. */
+    protected void as(VerdureElements.Attack attack, Runnable blows) {
+        VerdureElements.Sources s = (VerdureElements.Sources) damageSources();
+        s.attack(attack);
+        try {
+            blows.run();
+        } finally {
+            s.attack(VerdureElements.Attack.MAIN);
+        }
+    }
+
     /** What a landed blow does beyond its damage. */
     protected void mark(LivingEntity t) {
         switch (profile.mark) {
             case SLOW -> t.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, MARK_TICKS, 1), this);
             case POISON -> t.addEffect(new MobEffectInstance(MobEffects.POISON, MARK_TICKS, 0), this);
             case WEAKNESS -> t.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, MARK_TICKS + 20, 0), this);
-            case BURN -> t.igniteForSeconds(BURN_SECONDS);
+            case BURN -> VerdureElements.burn(this, t, BURN_SECONDS);              // a rime look chills instead
             default -> { }
         }
         switch (profile) {
@@ -638,8 +571,6 @@ public class WildMob extends Monster {
         if (act == Act.BURROW && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;   // safe under the ground
         boolean hurt = super.hurtServer(level, source, VerdureDamage.scale(profile.kind, source, amount));
         if (!hurt || !(source.getEntity() instanceof LivingEntity a) || a == this) return hurt;
-        if (profile == Wild.BRIAR_KING && getHealth() < getMaxHealth() / 2 && source.getDirectEntity() == a && distanceTo(a) < 4.0)
-            a.hurtServer(level, damageSources().thorns(this), THORNS);                  // its thorns, once it is hurt enough
         if (profile == Wild.PEARL_POD && isAlive() && random.nextInt(POD_DODGE_ONE_IN) == 0) blink(null);   // it blinks away
         if (profile == Wild.LANTERNPUFF && distanceTo(a) <= FLASH_RANGE) {             // it flashes in its striker's eyes
             a.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, FLASH_TICKS, 0), this);
@@ -675,11 +606,13 @@ public class WildMob extends Monster {
             case CARRION_BLOOM -> SoundEvents.CAVE_VINES_BREAK;
             case VOID_JELLY -> SoundEvents.CHORUS_FLOWER_GROW;
             case RIFT_NARWHAL -> SoundEvents.ELDER_GUARDIAN_AMBIENT;
-            case WARTBACK -> SoundEvents.HOGLIN_ANGRY;
-            case WARPED_STILT -> SoundEvents.FUNGUS_BREAK;
+            case WARTBACK, WARPED_WARTBACK -> SoundEvents.HOGLIN_ANGRY;
+            case WARPED_STILT, BLIGHTCAP -> SoundEvents.FUNGUS_BREAK;
             case SOULWICK -> SoundEvents.SOUL_ESCAPE.value();
             case CINDER_THISTLE, LANTERNPUFF -> SoundEvents.FIRECHARGE_USE;
             case NYLIUM_LURKER -> SoundEvents.NYLIUM_BREAK;
+            case SNARLSTUMP -> SoundEvents.WOOD_BREAK;
+            case GLISTERLURE -> SoundEvents.AMETHYST_BLOCK_CHIME;
         };
     }
 

@@ -64,10 +64,16 @@ public final class VerdureEvents {
 
     /** A grown herb's monster: the first strain's is its family's first; the later strains' one of the family's six. */
     public static Mob wake(ServerLevel level, BlockPos pos, Herb herb) {
-        if (herb.tier == 1) return wake(level, pos, herb.kind);
-        List<Ferox> hunters = Arrays.stream(Ferox.values()).filter(f -> f.kind == herb.kind).toList();
-        Ferox f = hunters.get(level.getRandom().nextInt(hunters.size()));
-        return rise(level, pos, VerdureEntities.ferox(f), f == Ferox.LANTERN_LEECH ? 0.5 : 0.0);
+        Mob mob;
+        if (herb.tier == 1) mob = wake(level, pos, herb.kind);
+        else {
+            List<Ferox> hunters = Arrays.stream(Ferox.values()).filter(f -> f.kind == herb.kind).toList();
+            Ferox f = hunters.get(level.getRandom().nextInt(hunters.size()));
+            mob = rise(level, pos, VerdureEntities.ferox(f), f == Ferox.LANTERN_LEECH ? 0.5 : 0.0);
+        }
+        // the strain sets its look (docs/DESIGN.md, section 12 rule 1)
+        if (mob != null) Looks.set(mob, Looks.grown(Looks.mob(mob), herb, level, pos, level.getRandom()));
+        return mob;
     }
 
     private static Mob rise(ServerLevel level, BlockPos pos, EntityType<? extends Mob> type, double up) {

@@ -6,11 +6,27 @@
     "age=1": {
       "model": "floraferox:block/moonrime_stage1"
     },
-    "age=2": {
-      "model": "floraferox:block/moonrime_stage2"
-    },
-    "age=3": {
-      "model": "floraferox:block/moonrime_stage3"
-    }
+    "age=2": [
+      {
+        "model": "floraferox:block/moonrime_stage2"
+      },
+      {
+        "model": "floraferox:block/moonrime_stage2_b"
+      },
+      {
+        "model": "floraferox:block/moonrime_stage2_c"
+      }
+    ],
+    "age=3": [
+      {
+        "model": "floraferox:block/moonrime_stage3"
+      },
+      {
+        "model": "floraferox:block/moonrime_stage3_b"
+      },
+      {
+        "model": "floraferox:block/moonrime_stage3_c"
+      }
+    ]
   }
 }

@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "regions_unexplored"
+    }
+  ],
+  "type": "neoforge:add_spawns",
+  "biomes": "regions_unexplored:mycotoxic_undergrowth",
+  "spawners": {
+    "type": "floraferox:blightcap",
+    "weight": 12,
+    "minCount": 1,
+    "maxCount": 3
+  }
+}

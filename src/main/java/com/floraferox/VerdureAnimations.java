@@ -359,6 +359,103 @@ public final class VerdureAnimations {
         for (int j = 0; j < 5; j++) rot(p, r.stalk[0][j], sin(s.age * 0.1F - j * 0.6F) * 0.05F, 0, cos(s.age * 0.1F - j * 0.5F) * 0.04F);
     }
 
+    // ---- the four originals' reworks (tools/gen/verdure/ferox12.py): their sheets' own clips, baked -----------------------
+    /**
+     * One of the four originals played from its baked clips (VerdureModels.clips, in ferox12.STATES's order), once its
+     * rework is the picked concept; until then of() gives null and the hand-written motion above plays.
+     */
+    public static final class Baked {
+        final VerdureModels.Clip[] clips;
+        final int head;
+        final int[] wings;
+
+        private Baked(ModelSpec spec, VerdureModels.Clip[] clips) {
+            this.clips = clips;
+            Rig r = new Rig(spec);
+            head = r.at("head");
+            wings = new int[] { r.at("wing_l"), r.at("wing_r") };
+        }
+
+        public static Baked of(ModelSpec spec, String id) {
+            VerdureModels.Clip[] c = VerdureModels.clips(id);
+            return c == null ? null : new Baked(spec, c);
+        }
+    }
+
+    /** A looping clip, this many cycles in; a one-shot at t (0..1). */
+    private static void loop(Pose p, VerdureModels.Clip c, float cycles, float amt) { play(p, c, cycles * c.frames(), true, amt); }
+
+    private static void at(Pose p, VerdureModels.Clip c, float t, float amt) {
+        play(p, c, Math.max(0F, Math.min(1F, t)) * (c.frames() - 1), false, amt);
+    }
+
+    /** Its idle by its clock, crossfaded into its walk by how fast it goes (stride: limb swing per walk cycle). */
+    private static void stroll(Pose p, VerdureModels.Clip idle, VerdureModels.Clip walk, AnimState s, float idleTicks, float stride) {
+        float w = Math.min(1F, s.limbAmount * 1.5F);
+        loop(p, idle, s.age / idleTicks, 1F - w);
+        loop(p, walk, s.limbSwing / stride, w);
+    }
+
+    private static void look(Baked b, Pose p, AnimState s) { rot(p, b.head, s.headPitch * 0.3F, s.headYaw * 0.4F, 0); }
+
+    /** Hover (two beats in 14 ticks) or fly on; the heart shot: the tell (0..0.3), the dart (to 0.6), the flare. */
+    public static void pulseGnat(Baked b, Pose p, AnimState s) {
+        PulseGnatBrain.State st = PulseGnatBrain.State.values()[Math.max(0, Math.min(4, s.mode))];
+        switch (st) {
+            case TELL -> at(p, b.clips[2], 0.3F * s.action / FLY_TELL_TICKS, 1F);
+            case DART -> at(p, b.clips[2], 0.3F + 0.3F * s.action / FLY_DART_TICKS, 1F);
+            case RECOVER -> at(p, b.clips[2], 0.6F + 0.4F * s.action / FLY_RECOVER_TICKS, 1F);
+            default -> loop(p, b.clips[st == PulseGnatBrain.State.ORBIT ? 1 : 0], s.age / 14F, 1F);
+        }
+    }
+
+    /** Idle or hop; rooted by day (eased in); the rear, then the lunge (0..0.35), snap (to 0.55) and recovery. */
+    public static void duskSprig(Baked b, Pose p, AnimState s) {
+        DuskSprigBrain.State st = DuskSprigBrain.State.values()[Math.max(0, Math.min(6, s.mode))];
+        switch (st) {
+            case ROOTED -> {
+                float k = smooth(0F, 10F, s.action);
+                loop(p, b.clips[0], s.age / 60F, 1F - k);
+                loop(p, b.clips[2], s.age / 80F, k);
+            }
+            case REAR -> at(p, b.clips[3], s.action / SPROUT_REAR_TICKS, 1F);
+            case LUNGE -> at(p, b.clips[4], 0.35F * s.action / SPROUT_LUNGE_TICKS, 1F);
+            case SNAP -> at(p, b.clips[4], 0.35F + 0.2F * s.action / SPROUT_SNAP_TICKS, 1F);
+            case RECOVER -> at(p, b.clips[4], 0.55F + 0.45F * s.action / SPROUT_RECOVER_TICKS, 1F);
+            default -> stroll(p, b.clips[0], b.clips[1], s, 60F, 5.24F);
+        }
+        look(b, p, s);
+    }
+
+    /** Idle or crawl; the crouch, the bound (cases up, the wings out only now), the landing (the crouch run back). */
+    public static void moonTick(Baked b, Pose p, AnimState s) {
+        MoonTickBrain.State st = MoonTickBrain.State.values()[Math.max(0, Math.min(3, s.mode))];
+        switch (st) {
+            case CROUCH -> at(p, b.clips[2], s.action / LOUSE_CROUCH_TICKS, 1F);
+            case AIR -> {
+                float k = Math.min(1F, s.action / 4F);
+                at(p, b.clips[2], 1F, 1F - k);
+                loop(p, b.clips[3], s.age / 8F, k);
+            }
+            case LAND -> at(p, b.clips[2], 1F - s.action / LOUSE_LAND_TICKS, 1F);
+            default -> stroll(p, b.clips[0], b.clips[1], s, 40F, 6.98F);
+        }
+        for (int w : b.wings) show(p, w, st == MoonTickBrain.State.AIR);
+        look(b, p, s);
+    }
+
+    /** Idle or the lumbering stride; the slam: the tell (0..0.35), the slam (to 0.5), the recovery. */
+    public static void mireGhast(Baked b, Pose p, AnimState s) {
+        MireGhastBrain.State st = MireGhastBrain.State.values()[Math.max(0, Math.min(3, s.mode))];
+        switch (st) {
+            case TELL -> at(p, b.clips[2], 0.35F * s.action / GHOUL_TELL_TICKS, 1F);
+            case SLAM -> at(p, b.clips[2], 0.35F + 0.15F * s.action / GHOUL_SLAM_TICKS, 1F);
+            case RECOVER -> at(p, b.clips[2], 0.5F + 0.5F * s.action / GHOUL_RECOVER_TICKS, 1F);
+            default -> stroll(p, b.clips[0], b.clips[1], s, 60F, 11.42F);
+        }
+        look(b, p, s);
+    }
+
     // ---- 1.4's wild mobs and 1.2's six (tools/gen/verdure/wild.py): their sheets' own walk and attack, baked ----------------------
     /**
      * A mob played from its baked clips (VerdureModels.clips): 1.4's wild mobs and 1.2's six; its timings, whether it
@@ -367,9 +464,18 @@ public final class VerdureAnimations {
     public static final class WildRig {
         final StrikeBrain.Timing timing;
         final boolean floats, hops;
-        final VerdureModels.Clip walk, attack;
+        final VerdureModels.Clip walk, attack, idle;
+        final VerdureModels.Clip crest, wings;            // a boss's two phase looks, laid over the rest (the Thorn
+                                                          // Matriarch's crest and wings, the Briar King's crown and roses)
         final VerdureModels.Spin spin;
-        final int head;
+        final int head, pollen;
+        final int[] cracks, flare;                        // the Crimson Behemoth's phase-3 looks: its crk_ and flr_ shells
+        final int[] blooms;                               // the Briar King's crown blooms, shown while his crown flowers
+        final int[] brood;                                // the Thorn Matriarch's brood flaps, torn open from her phase 2
+        final int[] tuck;                                 // the Coil Snail's head, stalks, tail and shell, drawn in to hide
+        private final String[] names;
+        final int[][] stageOnly, stageFrom;               // a Behemoth look's growths (boss_variants.py): st<n>_ parts show
+                                                          // in phase n only; ish/ooz/mag<n>_ from phase n on
 
         public WildRig(ModelSpec spec, String id, StrikeBrain.Timing timing, boolean floats, boolean hops) {
             this.timing = timing;
@@ -378,8 +484,57 @@ public final class VerdureAnimations {
             VerdureModels.Clip[] c = VerdureModels.clips(id);
             walk = c[0];
             attack = c[1];
+            idle = c.length > 2 ? c[2] : null;              // the overhaul's idle (wildmotion.py), once it is picked
+            crest = c.length > 3 ? c[3] : null;             // tools/gen/verdure/boss_tm.py, boss_bk6.py OVERLAYS
+            wings = c.length > 4 ? c[4] : null;
             spin = VerdureModels.spin(id);
-            head = new Rig(spec).at("head");
+            names = new String[spec.parts.length];
+            for (int i = 0; i < names.length; i++) names[i] = spec.parts[i].name;
+            Rig rig = new Rig(spec);
+            head = rig.at("head");
+            pollen = crest != null ? rig.at("pollen") : -1;
+            cracks = named(spec, "crk_");                  // tools/gen/verdure/boss_tell.py (b_cracks)
+            flare = named(spec, "flr_");
+            blooms = id.startsWith("briar_king") ? named(spec, "bloom") : new int[0];   // boss_bk6.py (b6_boss)
+            brood = id.startsWith("thorn_matriarch") ? named(spec, "brood_") : new int[0];   // boss_tm4.py (t4_springqueen)
+            tuck = id.startsWith("coil_snail") ? new int[] { head, rig.at("stalk_l"), rig.at("stalk_r"), rig.at("tail"), rig.at("shell") }
+                    : null;                                // tools/gen/verdure/coil_snail.py (tuck)
+            stageOnly = new int[3][];
+            stageFrom = new int[3][];
+            for (int n = 1; n <= 3; n++) {
+                stageOnly[n - 1] = named(spec, "st" + n + "_");
+                stageFrom[n - 1] = concat(named(spec, "ish" + n + "_"), named(spec, "ooz" + n + "_"), named(spec, "mag" + n + "_"));
+            }
+        }
+
+        private static int[] concat(int[]... parts) {
+            int n = 0;
+            for (int[] a : parts) n += a.length;
+            int[] out = new int[n];
+            n = 0;
+            for (int[] a : parts) for (int i : a) out[n++] = i;
+            return out;
+        }
+
+        /** -1 for a left part ("_l"), else 1, as the generator's sides. */
+        float side(int part) { return names[part].endsWith("_l") ? -1F : 1F; }
+
+        /** The Thorn Matriarch's brood flaps (none on any other model). */
+        public int[] brood() { return brood.clone(); }
+
+        /** Whether its model grows by phase (a Behemoth biome look): then its plain cracks stay hidden. */
+        public boolean staged() {
+            for (int n = 0; n < 3; n++) if (stageOnly[n].length > 0 || stageFrom[n].length > 0) return true;
+            return false;
+        }
+
+        private static int[] named(ModelSpec spec, String prefix) {
+            int n = 0;
+            for (var q : spec.parts) if (q.name.startsWith(prefix)) n++;
+            int[] out = new int[n];
+            n = 0;
+            for (int i = 0; i < spec.parts.length; i++) if (spec.parts[i].name.startsWith(prefix)) out[n++] = i;
+            return out;
         }
 
         public WildRig(ModelSpec spec, VerdureRules.Wild w) {
@@ -388,30 +543,96 @@ public final class VerdureAnimations {
     }
 
     /** Walk cycles a ground mob runs per unit of limb swing; a flier, or the rooted Carrion Bloom, by age. */
-    private static final float WILD_STRIDE = 1F / 9F, WILD_DRIFT = 1F / 40F;
+    private static final float WILD_STRIDE = 1F / 9F, WILD_DRIFT = 1F / 40F, WILD_IDLE = 60F;
+    /** Ticks a cycle of the crest's puffing (two puffs) and of the wings' beating (two beats). */
+    private static final float CREST_CYCLE = 40F, WINGS_CYCLE = 28F;
 
     /**
      * Its attack (0..1 through the tell, the blow and the recovery: StrikeBrain.attack) while it strikes, else its walk:
-     * a ground mob's scaled by how fast it goes, a flier's always (its sheets' walk is how it floats). Its head follows
-     * its look.
+     * a ground mob's scaled by how fast it goes, a flier's always (its sheets' walk is how it floats). One with an idle
+     * plays it by its clock, crossfaded into its walk by how fast it goes. Its head follows its look.
      */
     public static void wild(WildRig r, Pose p, AnimState s) {
         StrikeBrain.State st = StrikeBrain.State.values()[Math.max(0, Math.min(3, s.mode))];
         float t = StrikeBrain.attack(r.timing, st, s.action);
         if (st != StrikeBrain.State.WALK) {
-            play(p, r.attack, t * (VerdureModels.FRAMES - 1), false, 1F);
-        } else if (r.hops) {                                      // its hop on its own clock (extra: HopClock.phase)
-            play(p, r.walk, s.extra * VerdureModels.FRAMES, true, 1F);
-        } else if (!r.floats) {
-            play(p, r.walk, s.limbSwing * WILD_STRIDE * VerdureModels.FRAMES, true, Math.min(1F, s.limbAmount * 1.5F));
+            at(p, r.attack, t, 1F);
         } else {
-            play(p, r.walk, s.age * WILD_DRIFT * VerdureModels.FRAMES, true, 1F);
+            float go = Math.min(1F, s.limbAmount * 1.5F);           // how fast it goes
+            if (r.idle != null) loop(p, r.idle, s.age / WILD_IDLE, 1F - go);
+            float move = r.idle != null || !(r.hops || r.floats) ? go : 1F;
+            if (r.hops) loop(p, r.walk, s.extra, move);            // its hop on its own clock (extra: HopClock.phase)
+            else if (!r.floats) loop(p, r.walk, s.limbSwing * WILD_STRIDE, move);
+            else loop(p, r.walk, s.age * WILD_DRIFT, move);
         }
         if (r.spin != null) {                                     // the Pollen Puff's flower: round and round, by its clock
             float turn = s.age * WILD_DRIFT * r.spin.perCycle();
             for (int part : r.spin.parts()) p.rot(part, 0, turn, 0);
         }
-        rot(p, r.head, s.headPitch * 0.3F, s.headYaw * 0.5F, 0);
+        if (r.crest != null) {                                   // clocks[0]: how open the bloom is; [1]: the wings
+            float open = Math.max(0F, s.clocks[0]);
+            loop(p, r.crest, s.age / CREST_CYCLE, open);
+            if (r.pollen >= 0) {
+                p.visible(r.pollen, open > 0.05F);
+                if (open > 0.05F) p.scale(r.pollen, open * (1F + 0.25F * (0.5F + 0.5F * (float) Math.sin(2 * Math.PI * 2 * s.age / CREST_CYCLE))));
+            }
+        }
+        if (r.wings != null) loop(p, r.wings, s.age / WINGS_CYCLE, Math.max(0F, s.clocks[1]));
+        if (r.brood.length > 0) {                                // clocks[2]: how far her brood flaps have torn open
+            float b = Math.max(0F, Math.min(1F, s.clocks[2]));
+            float grow = b < 0.4F ? b / 0.4F * 0.8F : 0.8F + 0.2F * (b - 0.4F) / 0.6F;   // they burst out, then settle
+            float peel = b * b * (3F - 2F * b);
+            for (int i : r.brood) {
+                p.visible(i, b > 0.05F);
+                if (b <= 0.05F) continue;
+                p.scale(i, grow);
+                p.rot(i, 0, 0, r.side(i) * (-0.3F + 0.45F * peel));   // from the burst's lean to peeled right back
+            }
+        }
+        if (r.blooms.length > 0) {                               // clocks[0]: how far his crown has flowered
+            float open = Math.max(0F, s.clocks[0]);
+            for (int i : r.blooms) {
+                p.visible(i, open > 0.05F);
+                if (open > 0.05F) p.scale(i, open);
+            }
+        }
+        boolean staged = r.staged();
+        if (staged) {                                            // stage: its phase; its look's growths in place of the cracks
+            for (int n = 1; n <= 3; n++) {
+                for (int i : r.stageOnly[n - 1]) p.visible(i, n == s.stage);
+                for (int i : r.stageFrom[n - 1]) p.visible(i, n <= s.stage);
+            }
+            for (int i : r.cracks) p.visible(i, false);
+            for (int i : r.flare) p.visible(i, false);
+        } else if (r.cracks.length > 0) {                        // clocks[2]: how lit its cracks are; [3]: how hard they flare
+            boolean lit = s.clocks[2] > 0.05F, flare = s.clocks[3] > 0.05F;
+            for (int i : r.cracks) p.visible(i, lit);
+            for (int i : r.flare) p.visible(i, flare);
+        }
+        float hidden = 0F;
+        if (r.tuck != null) {                                    // clocks[0]: how far the Coil Snail is in its shell
+            hidden = Math.max(0F, Math.min(1F, s.clocks[0]));
+            if (st != StrikeBrain.State.WALK) {                  // its ram's clip holds the tuck's turns and shifts, not its scale
+                tuck(p, r.tuck, Math.max(hidden, smooth(0F, 0.3F, t) * (1F - smooth(0.8F, 1F, t))), false);
+            } else if (hidden > 0F) {
+                tuck(p, r.tuck, hidden, true);
+            }
+        }
+        rot(p, r.head, s.headPitch * 0.3F * (1F - hidden), s.headYaw * 0.5F * (1F - hidden), 0);
+    }
+
+    /** The Coil Snail drawn into its shell by a (0 out .. 1 in), as coil_snail.py's tuck: head, stalk_l, stalk_r, tail, shell. */
+    private static void tuck(Pose p, int[] i, float a, boolean turns) {
+        for (int k = 1; k <= 2; k++) {
+            if (i[k] < 0) continue;
+            p.scale(i[k], 1F, 1F - 0.85F * a, 1F);
+            if (turns) p.rot(i[k], 0.9F * a, 0, 0);
+        }
+        if (i[0] >= 0) p.scale(i[0], 1F - 0.5F * a);
+        if (!turns) return;
+        if (i[0] >= 0) p.move(i[0], 0, 1.5F * a, 4F * a);
+        if (i[3] >= 0) p.move(i[3], 0, 0, -3F * a);
+        if (i[4] >= 0) p.move(i[4], 0, 1.0F * a, 0);
     }
 
     /** Ticks a hopper is off the ground on a flat hop (HOP_UP under vanilla gravity and drag), its kick, its landing. */
@@ -459,8 +680,8 @@ public final class VerdureAnimations {
 
     /** A clip at frame f (between two keyframes, on a Catmull-Rom curve through their neighbours; a loop wraps), scaled by amt. */
     private static void play(Pose p, VerdureModels.Clip c, float f, boolean loop, float amt) {
-        int n = VerdureModels.FRAMES;
         if (amt <= 0F || c.parts().length == 0) return;
+        int n = c.frames();
         if (loop) f = ((f % n) + n) % n;
         else f = Math.max(0F, Math.min(n - 1, f));
         int a = (int) Math.floor(f);

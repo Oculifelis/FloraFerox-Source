@@ -1,0 +1,11 @@
+{
+  "item": "floraferox:runed_seed",
+  "throw_speed": 1.2,
+  "gravity": 0.05,
+  "damage": 2,
+  "breaks_on_hit": true,
+  "sticks_in_target": false,
+  "consumable": true,
+  "spin": "tumble",
+  "spin_speed": 24
+}

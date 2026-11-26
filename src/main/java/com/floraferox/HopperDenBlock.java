@@ -4,7 +4,10 @@ import com.floraferox.VerdureRules.Wild;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -14,6 +17,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -23,18 +28,56 @@ import net.minecraft.world.phys.AABB;
 /**
  * The Thorn Hopper's den (Oculifelis: "give hoppers a den they spawn from bc otherwise they just everywhere"): a bramble
  * burrow set into the grass, the only place hoppers come from. By day, on its random tick, it tops its brood up to
- * DEN_BROOD hoppers, which keep within DEN_HOME blocks of it.
+ * DEN_BROOD hoppers, which keep within DEN_HOME blocks of it. A Royal Nectar used on it by day calls the Thorn Matriarch
+ * out of it (docs/DESIGN.md section 15.1); then it is spent for HOME_REST.
  */
 public class HopperDenBlock extends Block {
     public static final MapCodec<HopperDenBlock> CODEC = simpleCodec(HopperDenBlock::new);
+    public static final BooleanProperty SPENT = BooleanProperty.create("spent");
 
     public HopperDenBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(SPENT, false));
     }
 
     @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
+        b.add(SPENT);
+    }
+
+    /** The Royal Nectar's call: by day, from a den not spent, the Matriarch bursts out (null if she couldn't). */
+    public static ThornMatriarch wake(ServerLevel level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        if (!(s.getBlock() instanceof HopperDenBlock) || s.getValue(SPENT) || !level.isBrightOutside()) return null;
+        var m = VerdureEntities.wild(Wild.THORN_MATRIARCH).spawn(level, pos.above(), EntitySpawnReason.TRIGGERED);
+        if (!(m instanceof ThornMatriarch boss)) return null;
+        rest(level, pos, true);
+        boss.wakeAt(level, pos);
+        level.playSound(null, pos, SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 2F, 0.5F);
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 30, 1, 0.4, 1, 0);
+        return boss;
+    }
+
+    /** Spent (till HOME_REST from now) or ready again. */
+    public static void rest(ServerLevel level, BlockPos pos, boolean spent) {
+        BlockState s = level.getBlockState(pos);
+        if (!(s.getBlock() instanceof HopperDenBlock)) return;
+        level.setBlock(pos, s.setValue(SPENT, spent), Block.UPDATE_ALL);
+        if (spent) level.scheduleTick(pos, s.getBlock(), VerdureRules.HOME_REST);
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!state.getValue(SPENT)) return;
+        boolean alive = !level.getEntitiesOfClass(ThornMatriarch.class, new AABB(pos).inflate(VerdureRules.MATRIARCH_LEASH),
+                b -> b.isAlive() && pos.equals(b.home())).isEmpty();
+        if (alive) level.scheduleTick(pos, this, VerdureRules.HOME_REST);
+        else rest(level, pos, false);
     }
 
     @Override

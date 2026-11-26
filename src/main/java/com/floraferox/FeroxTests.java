@@ -238,7 +238,7 @@ public final class FeroxTests {
         fp.setItemInHand(InteractionHand.MAIN_HAND, gun);
         fp.getInventory().add(new ItemStack(VerdureItems.BURR_PELLET.get(), 3));
         h.assertTrue(VerdureWeapons.BloomGun.ammo(fp).is(VerdureItems.BURR_PELLET.get()), "Burr Pellets are ammunition");
-        h.assertTrue(gun.getItem().use(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "the Pulse Pistol fires them");
+        h.assertTrue(((VerdureWeapons.BloomGun) gun.getItem()).shoot(level, fp, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "the Pulse Pistol fires them");
         h.assertTrue(VerdureWeapons.BloomGun.ammo(fp).getCount() == 2, "and spends one");
         level.getEntities(VerdureEntities.SHOT.get(), new AABB(middle(h)).inflate(12), e -> true).forEach(e -> e.discard());
         h.succeed();

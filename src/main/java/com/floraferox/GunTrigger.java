@@ -50,8 +50,8 @@ public final class GunTrigger {
         }
     }
 
-    /** Players holding the trigger, and the gun they held when they pulled it. */
-    private static final Map<UUID, ItemStack> HELD = new ConcurrentHashMap<>();
+    /** Players holding the trigger, and the hotbar slot they pulled it on. */
+    private static final Map<UUID, Integer> HELD = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void payloads(RegisterPayloadHandlersEvent e) {
@@ -71,7 +71,7 @@ public final class GunTrigger {
         }
         ItemStack gun = player.getMainHandItem();
         if (!triggers(gun)) return;
-        HELD.put(player.getUUID(), gun);
+        HELD.put(player.getUUID(), player.getInventory().getSelectedSlot());
         pull(player, gun, true);
     }
 
@@ -98,10 +98,12 @@ public final class GunTrigger {
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Post e) {
         if (!(e.getEntity() instanceof ServerPlayer player)) return;
-        ItemStack gun = HELD.get(player.getUUID());
-        if (gun == null) return;
-        if (player.getMainHandItem() != gun || !player.isAlive()) {
-            // switched items or died with the trigger down
+        Integer slot = HELD.get(player.getUUID());
+        if (slot == null) return;
+        ItemStack gun = player.getMainHandItem();
+        // 1.20: switched slots, died, or the gun broke with the trigger down (a broken stack is air, and casting it to a
+        // gun crashed the server tick)
+        if (player.getInventory().getSelectedSlot() != slot || !triggers(gun) || !player.isAlive()) {
             HELD.remove(player.getUUID());
             return;
         }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:rotten_flesh",
+    "minecraft:spider_eye",
+    "minecraft:glow_berries",
+    "minecraft:bone_meal"
+  ],
+  "result": {
+    "count": 1,
+    "id": "floraferox:carrion_bait"
+  }
+}

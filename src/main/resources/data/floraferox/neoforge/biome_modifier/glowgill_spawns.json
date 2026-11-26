@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:lush_caves"
+  ],
+  "spawners": {
+    "type": "floraferox:glowgill",
+    "weight": 3,
+    "minCount": 2,
+    "maxCount": 3
+  }
+}

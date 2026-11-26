@@ -77,3 +77,5 @@ server.properties
 tools/_bake/
 tools/_preview/
 __pycache__/
+
+# Local notes for tools, kept out of the public source

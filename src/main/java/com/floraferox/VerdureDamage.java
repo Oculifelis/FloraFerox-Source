@@ -42,7 +42,7 @@ public final class VerdureDamage {
         return ResourceKey.create(Registries.DAMAGE_TYPE, FloraFerox.id(name));
     }
 
-    /** 1.16: the guns' own damage type, magic (their shots are seed magic, not arrows). */
+    /** The guns' own damage type: ranged (1.16 made it magic; 1.20 puts it back, Oculifelis). */
     public static final ResourceKey<DamageType> SEED_BOLT = ResourceKey.create(Registries.DAMAGE_TYPE, FloraFerox.id("seed_bolt"));
 
     public static DamageSource source(ServerLevel level, DamageClass cls, Entity direct, Entity cause) {
@@ -54,7 +54,7 @@ public final class VerdureDamage {
     }
 
     /**
-     * 1.16: every class a hit counts as. Our own types may carry several tags (a whip's lash is summon and ranged); such
+     * 1.16: every class a hit counts as. Our own types may carry several tags (a whip's lash is summon and melee); such
      * a hit is dealt once and counts as whichever class serves it best, never as both at once. Others have one class.
      */
     public static java.util.EnumSet<DamageClass> classes(DamageSource source) {
